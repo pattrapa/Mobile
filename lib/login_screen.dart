@@ -12,11 +12,12 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
-  bool _isDarkMode = false;
   bool _obscurePassword = true;
 
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController =
+      TextEditingController();
+  final TextEditingController _passwordController =
+      TextEditingController();
 
   final FocusNode _usernameFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
@@ -64,7 +65,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final isSuccess = await ApiService.login(username, password);
+      final isSuccess =
+          await ApiService.login(username, password);
 
       if (!mounted) return;
 
@@ -149,283 +151,316 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFAF6EE);
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, isDarkMode, _) {
+        final backgroundColor = isDarkMode
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFFAF6EE);
 
-    final cardColor = _isDarkMode
-        ? const Color(0xFF1E293B)
-        : Colors.white;
+        final cardColor = isDarkMode
+            ? const Color(0xFF1E293B)
+            : Colors.white;
 
-    final textColor = _isDarkMode
-        ? Colors.white
-        : const Color(0xFF2D261E);
+        final textColor = isDarkMode
+            ? Colors.white
+            : const Color(0xFF2D261E);
 
-    final subtitleColor = _isDarkMode
-        ? Colors.white60
-        : const Color(0xFF6B5E4E);
+        final subtitleColor = isDarkMode
+            ? Colors.white60
+            : const Color(0xFF6B5E4E);
 
-    final primaryColor = _isDarkMode
-        ? const Color(0xFF38BDF8)
-        : const Color(0xFFD97706);
+        final primaryColor = isDarkMode
+            ? const Color(0xFF38BDF8)
+            : const Color(0xFFD97706);
 
-    final inputFillColor = _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFDFBF7);
+        final inputFillColor = isDarkMode
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFFDFBF7);
 
-    final borderColor = _isDarkMode
-        ? const Color(0xFF334155)
-        : const Color(0xFFEFEBE3);
+        final borderColor = isDarkMode
+            ? const Color(0xFF334155)
+            : const Color(0xFFEFEBE3);
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _isDarkMode = !_isDarkMode;
-              });
-            },
-            icon: Icon(
-              _isDarkMode
-                  ? Icons.wb_sunny_outlined
-                  : Icons.dark_mode_outlined,
-              color: primaryColor,
-            ),
-            tooltip: _isDarkMode
-                ? 'Switch to Warm Mode'
-                : 'Switch to Dark Mode',
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 24,
-            ),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 460,
+        return Scaffold(
+          backgroundColor: backgroundColor,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              IconButton(
+                onPressed: ThemeController.toggleTheme,
+                icon: Icon(
+                  isDarkMode
+                      ? Icons.wb_sunny_outlined
+                      : Icons.dark_mode_outlined,
+                  color: primaryColor,
+                ),
+                tooltip: isDarkMode
+                    ? 'Switch to Warm Mode'
+                    : 'Switch to Dark Mode',
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 92,
-                    height: 92,
-                    decoration: BoxDecoration(
-                      color: primaryColor.withValues(alpha: 0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.mic_none_rounded,
-                      size: 52,
-                      color: primaryColor,
-                    ),
+              const SizedBox(width: 10),
+            ],
+          ),
+          body: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 24,
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 460,
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'SpeakFlow',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w800,
-                      color: textColor,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Practice your presentation with confidence',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: subtitleColor,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 38),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    padding: const EdgeInsets.all(26),
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: borderColor,
+                  child: Column(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 92,
+                        height: 92,
+                        decoration: BoxDecoration(
+                          color: primaryColor.withValues(
+                            alpha: 0.12,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.mic_none_rounded,
+                          size: 52,
+                          color: primaryColor,
+                        ),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _isDarkMode
-                              ? Colors.black.withValues(alpha: 0.22)
-                              : const Color(0xFF7A7062)
-                                  .withValues(alpha: 0.08),
-                          blurRadius: 24,
-                          offset: const Offset(0, 10),
+                      const SizedBox(height: 20),
+                      Text(
+                        'SpeakFlow',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w800,
+                          color: textColor,
+                          letterSpacing: 0.5,
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          'Sign In',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: textColor,
-                          ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Practice your presentation with confidence',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: subtitleColor,
+                          height: 1.5,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Enter your account to start practicing',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: subtitleColor,
+                      ),
+                      const SizedBox(height: 38),
+                      AnimatedContainer(
+                        duration:
+                            const Duration(milliseconds: 250),
+                        padding: const EdgeInsets.all(26),
+                        decoration: BoxDecoration(
+                          color: cardColor,
+                          borderRadius:
+                              BorderRadius.circular(24),
+                          border: Border.all(
+                            color: borderColor,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDarkMode
+                                  ? Colors.black.withValues(
+                                      alpha: 0.22,
+                                    )
+                                  : const Color(0xFF7A7062)
+                                      .withValues(
+                                      alpha: 0.08,
+                                    ),
+                              blurRadius: 24,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 24),
-                        TextField(
-                          controller: _usernameController,
-                          focusNode: _usernameFocusNode,
-                          enabled: !_isLoading,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.next,
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                          onSubmitted: (_) {
-                            FocusScope.of(context).requestFocus(
-                              _passwordFocusNode,
-                            );
-                          },
-                          decoration: _buildInputDecoration(
-                            label: 'Username',
-                            prefixIcon: Icons.person_outline_rounded,
-                            primaryColor: primaryColor,
-                            subtitleColor: subtitleColor,
-                            fillColor: inputFillColor,
-                            borderColor: borderColor,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: _passwordController,
-                          focusNode: _passwordFocusNode,
-                          enabled: !_isLoading,
-                          obscureText: _obscurePassword,
-                          textInputAction: TextInputAction.done,
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                          onSubmitted: (_) {
-                            _handleLogin();
-                          },
-                          decoration: _buildInputDecoration(
-                            label: 'Password',
-                            prefixIcon: Icons.lock_outline_rounded,
-                            primaryColor: primaryColor,
-                            subtitleColor: subtitleColor,
-                            fillColor: inputFillColor,
-                            borderColor: borderColor,
-                            suffixIcon: IconButton(
-                              onPressed: _isLoading
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        _obscurePassword =
-                                            !_obscurePassword;
-                                      });
-                                    },
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              'Sign In',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Enter your account to start practicing',
+                              style: TextStyle(
+                                fontSize: 14,
                                 color: subtitleColor,
                               ),
-                              tooltip: _obscurePassword
-                                  ? 'Show password'
-                                  : 'Hide password',
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 26),
-                        SizedBox(
-                          height: 54,
-                          child: ElevatedButton(
-                            onPressed: _isLoading
-                                ? null
-                                : _handleLogin,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
-                              disabledBackgroundColor:
-                                  primaryColor.withValues(alpha: 0.55),
-                              foregroundColor: _isDarkMode
-                                  ? const Color(0xFF0F172A)
-                                  : Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                            const SizedBox(height: 24),
+                            TextField(
+                              controller: _usernameController,
+                              focusNode: _usernameFocusNode,
+                              enabled: !_isLoading,
+                              keyboardType: TextInputType.text,
+                              textInputAction:
+                                  TextInputAction.next,
+                              style: TextStyle(
+                                color: textColor,
+                              ),
+                              onSubmitted: (_) {
+                                FocusScope.of(context)
+                                    .requestFocus(
+                                  _passwordFocusNode,
+                                );
+                              },
+                              decoration:
+                                  _buildInputDecoration(
+                                label: 'Username',
+                                prefixIcon: Icons
+                                    .person_outline_rounded,
+                                primaryColor: primaryColor,
+                                subtitleColor: subtitleColor,
+                                fillColor: inputFillColor,
+                                borderColor: borderColor,
                               ),
                             ),
-                            child: _isLoading
-                                ? SizedBox(
-                                    width: 22,
-                                    height: 22,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor:
-                                          AlwaysStoppedAnimation<Color>(
-                                        _isDarkMode
-                                            ? const Color(0xFF0F172A)
-                                            : Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                : const Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.login_rounded,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 10),
-                                      Text(
-                                        'Sign In',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
+                            const SizedBox(height: 16),
+                            TextField(
+                              controller: _passwordController,
+                              focusNode: _passwordFocusNode,
+                              enabled: !_isLoading,
+                              obscureText: _obscurePassword,
+                              textInputAction:
+                                  TextInputAction.done,
+                              style: TextStyle(
+                                color: textColor,
+                              ),
+                              onSubmitted: (_) {
+                                _handleLogin();
+                              },
+                              decoration:
+                                  _buildInputDecoration(
+                                label: 'Password',
+                                prefixIcon:
+                                    Icons.lock_outline_rounded,
+                                primaryColor: primaryColor,
+                                subtitleColor: subtitleColor,
+                                fillColor: inputFillColor,
+                                borderColor: borderColor,
+                                suffixIcon: IconButton(
+                                  onPressed: _isLoading
+                                      ? null
+                                      : () {
+                                          setState(() {
+                                            _obscurePassword =
+                                                !_obscurePassword;
+                                          });
+                                        },
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons
+                                            .visibility_off_outlined
+                                        : Icons
+                                            .visibility_outlined,
+                                    color: subtitleColor,
                                   ),
-                          ),
+                                  tooltip: _obscurePassword
+                                      ? 'Show password'
+                                      : 'Hide password',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 26),
+                            SizedBox(
+                              height: 54,
+                              child: ElevatedButton(
+                                onPressed: _isLoading
+                                    ? null
+                                    : _handleLogin,
+                                style:
+                                    ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor,
+                                  disabledBackgroundColor:
+                                      primaryColor.withValues(
+                                    alpha: 0.55,
+                                  ),
+                                  foregroundColor: isDarkMode
+                                      ? const Color(0xFF0F172A)
+                                      : Colors.white,
+                                  elevation: 0,
+                                  shape:
+                                      RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(
+                                      14,
+                                    ),
+                                  ),
+                                ),
+                                child: _isLoading
+                                    ? SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child:
+                                            CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<
+                                                  Color>(
+                                            isDarkMode
+                                                ? const Color(
+                                                    0xFF0F172A,
+                                                  )
+                                                : Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .center,
+                                        children: [
+                                          Icon(
+                                            Icons.login_rounded,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Sign In',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight:
+                                                  FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Improve your timing, pacing, and delivery',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: subtitleColor,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Improve your timing, pacing, and delivery',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: subtitleColor,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

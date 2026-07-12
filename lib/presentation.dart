@@ -28,8 +28,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController =
-      TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
 
   final FocusNode _titleFocusNode = FocusNode();
@@ -37,7 +36,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
   final FocusNode _timeFocusNode = FocusNode();
 
   bool _isLoading = false;
-  bool _isDarkMode = false;
+  bool get _isDarkMode => ThemeController.isDarkMode.value;
 
   @override
   void initState() {
@@ -64,57 +63,38 @@ class _PresentationScreenState extends State<PresentationScreen> {
   }
 
   Color get _backgroundColor {
-    return _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFAF6EE);
+    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFAF6EE);
   }
 
   Color get _cardColor {
-    return _isDarkMode
-        ? const Color(0xFF1E293B)
-        : Colors.white;
+    return _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
   }
 
   Color get _textColor {
-    return _isDarkMode
-        ? Colors.white
-        : const Color(0xFF2D261E);
+    return _isDarkMode ? Colors.white : const Color(0xFF2D261E);
   }
 
   Color get _subtitleColor {
-    return _isDarkMode
-        ? Colors.white60
-        : const Color(0xFF6B5E4E);
+    return _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
   }
 
   Color get _primaryColor {
-    return _isDarkMode
-        ? const Color(0xFF38BDF8)
-        : const Color(0xFFD97706);
+    return _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFD97706);
   }
 
   Color get _inputColor {
-    return _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFDFBF7);
+    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFDFBF7);
   }
 
   Color get _borderColor {
-    return _isDarkMode
-        ? const Color(0xFF334155)
-        : const Color(0xFFEFEBE3);
+    return _isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3);
   }
 
   Color get _buttonTextColor {
-    return _isDarkMode
-        ? const Color(0xFF0F172A)
-        : Colors.white;
+    return _isDarkMode ? const Color(0xFF0F172A) : Colors.white;
   }
 
-  void _showSnackBar(
-    String message, {
-    bool isError = false,
-  }) {
+  void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context)
@@ -130,14 +110,10 @@ class _PresentationScreenState extends State<PresentationScreen> {
                 color: Colors.white,
               ),
               const SizedBox(width: 10),
-              Expanded(
-                child: Text(message),
-              ),
+              Expanded(child: Text(message)),
             ],
           ),
-          backgroundColor: isError
-              ? Colors.redAccent
-              : const Color(0xFF16A34A),
+          backgroundColor: isError ? Colors.redAccent : const Color(0xFF16A34A),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -162,9 +138,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
     try {
       final title = _titleController.text.trim();
       final description = _descriptionController.text.trim();
-      final timeInMinutes = int.parse(
-        _timeController.text.trim(),
-      );
+      final timeInMinutes = int.parse(_timeController.text.trim());
       final timeInSeconds = timeInMinutes * 60;
 
       final item = await ApiService.createPresentation(
@@ -175,8 +149,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
 
       if (!mounted) return;
 
-      final rawPresentationId =
-          item['_id'] ?? item['presentation']?['_id'];
+      final rawPresentationId = item['_id'] ?? item['presentation']?['_id'];
 
       final presentationId = rawPresentationId?.toString();
 
@@ -196,9 +169,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
         _isLoading = false;
       });
 
-      _showSnackBar(
-        'Presentation created successfully',
-      );
+      _showSnackBar('Presentation created successfully');
 
       Navigator.pushReplacement(
         context,
@@ -216,10 +187,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
         _isLoading = false;
       });
 
-      _showSnackBar(
-        'Create failed: $e',
-        isError: true,
-      );
+      _showSnackBar('Create failed: $e', isError: true);
     }
   }
 
@@ -233,10 +201,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
     final presentationId = widget.id;
 
     if (presentationId == null || presentationId.isEmpty) {
-      _showSnackBar(
-        'Presentation ID not found',
-        isError: true,
-      );
+      _showSnackBar('Presentation ID not found', isError: true);
       return;
     }
 
@@ -249,9 +214,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
     try {
       final title = _titleController.text.trim();
       final description = _descriptionController.text.trim();
-      final timeInMinutes = int.parse(
-        _timeController.text.trim(),
-      );
+      final timeInMinutes = int.parse(_timeController.text.trim());
       final timeInSeconds = timeInMinutes * 60;
 
       final isSuccess = await ApiService.updatePresentation(
@@ -268,16 +231,11 @@ class _PresentationScreenState extends State<PresentationScreen> {
       });
 
       if (isSuccess) {
-        _showSnackBar(
-          'Presentation updated successfully',
-        );
+        _showSnackBar('Presentation updated successfully');
 
         Navigator.pop(context, true);
       } else {
-        _showSnackBar(
-          'Update failed',
-          isError: true,
-        );
+        _showSnackBar('Update failed', isError: true);
       }
     } catch (e) {
       if (!mounted) return;
@@ -286,10 +244,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
         _isLoading = false;
       });
 
-      _showSnackBar(
-        'Update failed: $e',
-        isError: true,
-      );
+      _showSnackBar('Update failed: $e', isError: true);
     }
   }
 
@@ -303,57 +258,35 @@ class _PresentationScreenState extends State<PresentationScreen> {
       labelText: label,
       hintText: hint,
       suffixText: suffixText,
-      labelStyle: TextStyle(
-        color: _subtitleColor,
-      ),
+      labelStyle: TextStyle(color: _subtitleColor),
       hintStyle: TextStyle(
-        color: _isDarkMode
-            ? Colors.white30
-            : const Color(0xFFAAA093),
+        color: _isDarkMode ? Colors.white30 : const Color(0xFFAAA093),
       ),
       suffixStyle: TextStyle(
         color: _subtitleColor,
         fontWeight: FontWeight.w600,
       ),
-      prefixIcon: Icon(
-        icon,
-        color: _primaryColor,
-      ),
+      prefixIcon: Icon(icon, color: _primaryColor),
       filled: true,
       fillColor: _inputColor,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 18,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: _borderColor,
-        ),
+        borderSide: BorderSide(color: _borderColor),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: _primaryColor,
-          width: 2,
-        ),
+        borderSide: BorderSide(color: _primaryColor, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Colors.redAccent,
-        ),
+        borderSide: const BorderSide(color: Colors.redAccent),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Colors.redAccent,
-          width: 2,
-        ),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 2),
       ),
-      errorStyle: const TextStyle(
-        color: Colors.redAccent,
-      ),
+      errorStyle: const TextStyle(color: Colors.redAccent),
     );
   }
 
@@ -361,9 +294,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
     return BoxDecoration(
       color: _cardColor,
       borderRadius: BorderRadius.circular(24),
-      border: Border.all(
-        color: _borderColor,
-      ),
+      border: Border.all(color: _borderColor),
       boxShadow: [
         BoxShadow(
           color: _isDarkMode
@@ -387,18 +318,14 @@ class _PresentationScreenState extends State<PresentationScreen> {
             shape: BoxShape.circle,
           ),
           child: Icon(
-            widget.isEdit
-                ? Icons.edit_note_rounded
-                : Icons.add_chart_rounded,
+            widget.isEdit ? Icons.edit_note_rounded : Icons.add_chart_rounded,
             size: 44,
             color: _primaryColor,
           ),
         ),
         const SizedBox(height: 18),
         Text(
-          widget.isEdit
-              ? 'Edit Presentation'
-              : 'Create Presentation',
+          widget.isEdit ? 'Edit Presentation' : 'Create Presentation',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -412,11 +339,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
               ? 'Update your presentation information and target duration.'
               : 'Add the basic details before uploading slides and scripts.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            height: 1.5,
-            color: _subtitleColor,
-          ),
+          style: TextStyle(fontSize: 14, height: 1.5, color: _subtitleColor),
         ),
       ],
     );
@@ -429,27 +352,17 @@ class _PresentationScreenState extends State<PresentationScreen> {
       decoration: BoxDecoration(
         color: _primaryColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: _primaryColor.withValues(alpha: 0.22),
-        ),
+        border: Border.all(color: _primaryColor.withValues(alpha: 0.22)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.lightbulb_outline_rounded,
-            size: 21,
-            color: _primaryColor,
-          ),
+          Icon(Icons.lightbulb_outline_rounded, size: 21, color: _primaryColor),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               'Set a realistic target time so the practice result can compare your actual presentation duration.',
-              style: TextStyle(
-                fontSize: 13,
-                height: 1.45,
-                color: _textColor,
-              ),
+              style: TextStyle(fontSize: 13, height: 1.45, color: _textColor),
             ),
           ),
         ],
@@ -468,13 +381,9 @@ class _PresentationScreenState extends State<PresentationScreen> {
             enabled: !_isLoading,
             textInputAction: TextInputAction.next,
             maxLength: 100,
-            style: TextStyle(
-              color: _textColor,
-            ),
+            style: TextStyle(color: _textColor),
             onFieldSubmitted: (_) {
-              FocusScope.of(context).requestFocus(
-                _descriptionFocusNode,
-              );
+              FocusScope.of(context).requestFocus(_descriptionFocusNode);
             },
             decoration: _inputDecoration(
               label: 'Presentation title',
@@ -505,10 +414,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
             minLines: 4,
             maxLines: 6,
             maxLength: 500,
-            style: TextStyle(
-              color: _textColor,
-              height: 1.5,
-            ),
+            style: TextStyle(color: _textColor, height: 1.5),
             decoration: _inputDecoration(
               label: 'Description',
               hint: 'Describe the topic and purpose of this presentation',
@@ -539,9 +445,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(3),
             ],
-            style: TextStyle(
-              color: _textColor,
-            ),
+            style: TextStyle(color: _textColor),
             onFieldSubmitted: (_) {
               if (widget.isEdit) {
                 _handleUpdate();
@@ -589,12 +493,11 @@ class _PresentationScreenState extends State<PresentationScreen> {
               onPressed: _isLoading
                   ? null
                   : widget.isEdit
-                      ? _handleUpdate
-                      : _handleSave,
+                  ? _handleUpdate
+                  : _handleSave,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _primaryColor,
-                disabledBackgroundColor:
-                    _primaryColor.withValues(alpha: 0.50),
+                disabledBackgroundColor: _primaryColor.withValues(alpha: 0.50),
                 foregroundColor: _buttonTextColor,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -618,9 +521,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
                       ),
                     )
                   : Text(
-                      widget.isEdit
-                          ? 'Save Changes'
-                          : 'Continue to Slides',
+                      widget.isEdit ? 'Save Changes' : 'Continue to Slides',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -636,16 +537,9 @@ class _PresentationScreenState extends State<PresentationScreen> {
   Widget _buildContent() {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          20,
-          20,
-          20,
-          32,
-        ),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 680,
-          ),
+          constraints: const BoxConstraints(maxWidth: 680),
           child: Container(
             padding: const EdgeInsets.all(28),
             decoration: _cardDecoration(),
@@ -665,55 +559,47 @@ class _PresentationScreenState extends State<PresentationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _backgroundColor,
-      appBar: AppBar(
-        backgroundColor: _backgroundColor,
-        foregroundColor: _textColor,
-        elevation: 0,
-        titleSpacing: 8,
-        title: Row(
-          children: [
-            Icon(
-              Icons.mic_none_rounded,
-              color: _primaryColor,
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, isDarkMode, _) {
+        return Scaffold(
+          backgroundColor: _backgroundColor,
+          appBar: AppBar(
+            backgroundColor: _backgroundColor,
+            foregroundColor: _textColor,
+            elevation: 0,
+            titleSpacing: 8,
+            title: Row(
+              children: [
+                Icon(Icons.mic_none_rounded, color: _primaryColor),
+                const SizedBox(width: 9),
+                Text(
+                  widget.isEdit ? 'Edit Presentation' : 'New Presentation',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 9),
-            Text(
-              widget.isEdit
-                  ? 'Edit Presentation'
-                  : 'New Presentation',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
+            actions: [
+              IconButton(
+                onPressed: _isLoading ? null : ThemeController.toggleTheme,
+                icon: Icon(
+                  isDarkMode
+                      ? Icons.wb_sunny_outlined
+                      : Icons.dark_mode_outlined,
+                ),
+                tooltip: isDarkMode
+                    ? 'Switch to Warm Mode'
+                    : 'Switch to Dark Mode',
               ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: _isLoading
-                ? null
-                : () {
-                    setState(() {
-                      _isDarkMode = !_isDarkMode;
-                    });
-                  },
-            icon: Icon(
-              _isDarkMode
-                  ? Icons.wb_sunny_outlined
-                  : Icons.dark_mode_outlined,
-            ),
-            tooltip: _isDarkMode
-                ? 'Switch to Warm Mode'
-                : 'Switch to Dark Mode',
+              const SizedBox(width: 8),
+            ],
           ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        child: _buildContent(),
-      ),
+          body: SafeArea(child: _buildContent()),
+        );
+      },
     );
   }
 }

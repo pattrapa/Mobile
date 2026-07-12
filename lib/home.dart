@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _presentations = [];
 
   bool _isLoading = true;
-  bool _isDarkMode = false;
+  bool get _isDarkMode => ThemeController.isDarkMode.value;
 
   @override
   void initState() {
@@ -99,18 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _openCreatePresentation() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const PresentationScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const PresentationScreen()),
     );
 
     if (!mounted) return;
     await _loadPresentations();
   }
 
-  Future<void> _openEditPresentation(
-    Map<String, dynamic> item,
-  ) async {
+  Future<void> _openEditPresentation(Map<String, dynamic> item) async {
     final id = item['_id']?.toString();
 
     if (id == null || id.isEmpty) {
@@ -135,9 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await _loadPresentations();
   }
 
-  Future<void> _deletePresentation(
-    Map<String, dynamic> item,
-  ) async {
+  Future<void> _deletePresentation(Map<String, dynamic> item) async {
     final id = item['_id']?.toString();
 
     if (id == null || id.isEmpty) {
@@ -162,9 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _confirmDelete(
-    Map<String, dynamic> item,
-  ) async {
+  Future<void> _confirmDelete(Map<String, dynamic> item) async {
     final title = item['title']?.toString().trim();
 
     final displayTitle = title == null || title.isEmpty
@@ -174,9 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        final textColor = _isDarkMode
-            ? Colors.white
-            : const Color(0xFF2D261E);
+        final textColor = _isDarkMode ? Colors.white : const Color(0xFF2D261E);
 
         final subtitleColor = _isDarkMode
             ? Colors.white70
@@ -191,10 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           title: Row(
             children: [
-              const Icon(
-                Icons.delete_outline_rounded,
-                color: Colors.redAccent,
-              ),
+              const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -209,10 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           content: Text(
             'Are you sure you want to delete $displayTitle?',
-            style: TextStyle(
-              color: subtitleColor,
-              height: 1.5,
-            ),
+            style: TextStyle(color: subtitleColor, height: 1.5),
           ),
           actions: [
             TextButton(
@@ -222,9 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(
                 'Cancel',
                 style: TextStyle(
-                  color: _isDarkMode
-                      ? Colors.white60
-                      : const Color(0xFF6B5E4E),
+                  color: _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E),
                 ),
               ),
             ),
@@ -256,9 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        final textColor = _isDarkMode
-            ? Colors.white
-            : const Color(0xFF2D261E);
+        final textColor = _isDarkMode ? Colors.white : const Color(0xFF2D261E);
 
         final subtitleColor = _isDarkMode
             ? Colors.white70
@@ -282,19 +262,13 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 10),
               Text(
                 'Logout',
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w700),
               ),
             ],
           ),
           content: Text(
             'Are you sure you want to logout?',
-            style: TextStyle(
-              color: subtitleColor,
-              height: 1.5,
-            ),
+            style: TextStyle(color: subtitleColor, height: 1.5),
           ),
           actions: [
             TextButton(
@@ -304,9 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(
                 'Cancel',
                 style: TextStyle(
-                  color: _isDarkMode
-                      ? Colors.white60
-                      : const Color(0xFF6B5E4E),
+                  color: _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E),
                 ),
               ),
             ),
@@ -332,9 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (_) => const LoginScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
         (_) => false,
       );
     }
@@ -349,9 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: _isDarkMode
-            ? const Color(0xFF1E293B)
-            : Colors.white,
+        color: _isDarkMode ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: _isDarkMode
@@ -365,48 +333,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 : const Color(0xFF7A7062).withValues(alpha: 0.07),
             blurRadius: 18,
             offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 62,
-            height: 62,
-            decoration: BoxDecoration(
-              color: primaryColor.withValues(alpha: 0.13),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Icon(
-              Icons.record_voice_over_rounded,
-              size: 34,
-              color: primaryColor,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome back',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Choose a presentation and start practicing your delivery.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.45,
-                    color: subtitleColor,
-                  ),
-                ),
-              ],
-            ),
           ),
         ],
       ),
@@ -434,10 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 4),
               Text(
                 '${_presentations.length} presentation${_presentations.length == 1 ? '' : 's'}',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: subtitleColor,
-                ),
+                style: TextStyle(fontSize: 13, color: subtitleColor),
               ),
             ],
           ),
@@ -466,18 +389,14 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 70),
           Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 420,
-              ),
+              constraints: const BoxConstraints(maxWidth: 420),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 28,
                   vertical: 36,
                 ),
                 decoration: BoxDecoration(
-                  color: _isDarkMode
-                      ? const Color(0xFF1E293B)
-                      : Colors.white,
+                  color: _isDarkMode ? const Color(0xFF1E293B) : Colors.white,
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color: _isDarkMode
@@ -540,9 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: const Icon(Icons.add_rounded),
                       label: const Text(
                         'Create presentation',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                   ],
@@ -566,19 +483,14 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView.builder(
         itemCount: _presentations.length,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(
-          top: 4,
-          bottom: 100,
-        ),
+        padding: const EdgeInsets.only(top: 4, bottom: 100),
         itemBuilder: (_, index) {
           final item = _presentations[index];
 
           return _PresentationCard(
             item: item,
             isDarkMode: _isDarkMode,
-            targetMinutes: _targetMinutes(
-              item['totalTargetTime'],
-            ),
+            targetMinutes: _targetMinutes(item['totalTargetTime']),
             onTap: () {
               _openPresentation(item);
             },
@@ -600,11 +512,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required Color primaryColor,
   }) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: primaryColor,
-        ),
-      );
+      return Center(child: CircularProgressIndicator(color: primaryColor));
     }
 
     if (_presentations.isEmpty) {
@@ -624,132 +532,110 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFAF6EE);
-
-    final appBarColor = _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFAF6EE);
-
-    final primaryColor = _isDarkMode
-        ? const Color(0xFF38BDF8)
-        : const Color(0xFFD97706);
-
-    final textColor = _isDarkMode
-        ? Colors.white
-        : const Color(0xFF2D261E);
-
-    final subtitleColor = _isDarkMode
-        ? Colors.white60
-        : const Color(0xFF6B5E4E);
-
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: appBarColor,
-        foregroundColor: textColor,
-        elevation: 0,
-        centerTitle: false,
-        titleSpacing: 20,
-        title: Row(
-          children: [
-            Icon(
-              Icons.mic_none_rounded,
-              color: primaryColor,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'SpeakFlow',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _isDarkMode = !_isDarkMode;
-              });
-            },
-            icon: Icon(
-              _isDarkMode
-                  ? Icons.wb_sunny_outlined
-                  : Icons.dark_mode_outlined,
-            ),
-            tooltip: _isDarkMode
-                ? 'Switch to Warm Mode'
-                : 'Switch to Dark Mode',
-          ),
-          IconButton(
-            onPressed: _confirmLogout,
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: 'Logout',
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 980,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                12,
-                20,
-                0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(
-                    textColor: textColor,
-                    subtitleColor: subtitleColor,
-                    primaryColor: primaryColor,
-                  ),
-                  const SizedBox(height: 24),
-                  _buildSectionTitle(
-                    textColor: textColor,
-                    subtitleColor: subtitleColor,
-                  ),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: _buildBody(
-                      textColor: textColor,
-                      subtitleColor: subtitleColor,
-                      primaryColor: primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openCreatePresentation,
-        backgroundColor: primaryColor,
-        foregroundColor: _isDarkMode
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, isDarkMode, _) {
+        final backgroundColor = isDarkMode
             ? const Color(0xFF0F172A)
-            : Colors.white,
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        icon: const Icon(Icons.add_rounded),
-        label: const Text(
-          'New presentation',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
+            : const Color(0xFFFAF6EE);
+
+        final appBarColor = isDarkMode
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFFAF6EE);
+
+        final primaryColor = isDarkMode
+            ? const Color(0xFF38BDF8)
+            : const Color(0xFFD97706);
+
+        final textColor = isDarkMode ? Colors.white : const Color(0xFF2D261E);
+
+        final subtitleColor = isDarkMode
+            ? Colors.white60
+            : const Color(0xFF6B5E4E);
+
+        return Scaffold(
+          backgroundColor: backgroundColor,
+          appBar: AppBar(
+            backgroundColor: appBarColor,
+            foregroundColor: textColor,
+            elevation: 0,
+            centerTitle: false,
+            titleSpacing: 20,
+            title: Row(
+              children: [
+                Icon(Icons.mic_none_rounded, color: primaryColor),
+                const SizedBox(width: 10),
+                const Text(
+                  'SpeakFlow',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                onPressed: ThemeController.toggleTheme,
+                icon: Icon(
+                  isDarkMode
+                      ? Icons.wb_sunny_outlined
+                      : Icons.dark_mode_outlined,
+                ),
+                tooltip: isDarkMode
+                    ? 'Switch to Warm Mode'
+                    : 'Switch to Dark Mode',
+              ),
+              IconButton(
+                onPressed: _confirmLogout,
+                icon: const Icon(Icons.logout_rounded),
+                tooltip: 'Logout',
+              ),
+              const SizedBox(width: 8),
+            ],
           ),
-        ),
-      ),
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 980),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle(
+                        textColor: textColor,
+                        subtitleColor: subtitleColor,
+                      ),
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: _buildBody(
+                          textColor: textColor,
+                          subtitleColor: subtitleColor,
+                          primaryColor: primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: _openCreatePresentation,
+            backgroundColor: primaryColor,
+            foregroundColor: isDarkMode
+                ? const Color(0xFF0F172A)
+                : Colors.white,
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            icon: const Icon(Icons.add_rounded),
+            label: const Text(
+              'New presentation',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -774,19 +660,13 @@ class _PresentationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rawTitle = item['title']?.toString().trim() ?? '';
-    final title = rawTitle.isEmpty
-        ? 'Untitled presentation'
-        : rawTitle;
+    final title = rawTitle.isEmpty ? 'Untitled presentation' : rawTitle;
 
     final description = item['description']?.toString().trim() ?? '';
 
-    final cardColor = isDarkMode
-        ? const Color(0xFF1E293B)
-        : Colors.white;
+    final cardColor = isDarkMode ? const Color(0xFF1E293B) : Colors.white;
 
-    final titleColor = isDarkMode
-        ? Colors.white
-        : const Color(0xFF2D261E);
+    final titleColor = isDarkMode ? Colors.white : const Color(0xFF2D261E);
 
     final descriptionColor = isDarkMode
         ? Colors.white70
@@ -809,9 +689,7 @@ class _PresentationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
             color: isDarkMode
@@ -901,14 +779,9 @@ class _PresentationCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 PopupMenuButton<String>(
                   tooltip: 'More options',
-                  icon: Icon(
-                    Icons.more_vert_rounded,
-                    color: secondaryColor,
-                  ),
+                  icon: Icon(Icons.more_vert_rounded, color: secondaryColor),
                   elevation: 5,
-                  color: isDarkMode
-                      ? const Color(0xFF334155)
-                      : Colors.white,
+                  color: isDarkMode ? const Color(0xFF334155) : Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -955,9 +828,7 @@ class _PresentationCard extends StatelessWidget {
                           SizedBox(width: 10),
                           Text(
                             'Delete',
-                            style: TextStyle(
-                              color: Colors.redAccent,
-                            ),
+                            style: TextStyle(color: Colors.redAccent),
                           ),
                         ],
                       ),
@@ -989,38 +860,25 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 7,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? const Color(0xFF0F172A)
-            : const Color(0xFFFDFBF7),
+        color: isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFDFBF7),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: isDarkMode
-              ? const Color(0xFF334155)
-              : const Color(0xFFEFEBE3),
+          color: isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: color,
-          ),
+          Icon(icon, size: 16, color: color),
           const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: isDarkMode
-                  ? Colors.white70
-                  : const Color(0xFF6B5E4E),
+              color: isDarkMode ? Colors.white70 : const Color(0xFF6B5E4E),
             ),
           ),
         ],

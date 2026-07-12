@@ -14,12 +14,10 @@ class ResultSummaryScreen extends StatefulWidget {
   });
 
   @override
-  State<ResultSummaryScreen> createState() =>
-      _ResultSummaryScreenState();
+  State<ResultSummaryScreen> createState() => _ResultSummaryScreenState();
 }
 
-class _ResultSummaryScreenState
-    extends State<ResultSummaryScreen> {
+class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   bool _isDarkMode = false;
 
   int get _targetTimeInSeconds {
@@ -34,8 +32,7 @@ class _ResultSummaryScreenState
   double get _progressValue {
     if (_targetTimeInSeconds <= 0) return 0;
 
-    final progress =
-        widget.actualTimeInSeconds / _targetTimeInSeconds;
+    final progress = widget.actualTimeInSeconds / _targetTimeInSeconds;
 
     return progress.clamp(0.0, 1.0);
   }
@@ -106,51 +103,35 @@ class _ResultSummaryScreenState
   }
 
   Color get _backgroundColor {
-    return _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFAF6EE);
+    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFAF6EE);
   }
 
   Color get _cardColor {
-    return _isDarkMode
-        ? const Color(0xFF1E293B)
-        : Colors.white;
+    return _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
   }
 
   Color get _textColor {
-    return _isDarkMode
-        ? Colors.white
-        : const Color(0xFF2D261E);
+    return _isDarkMode ? Colors.white : const Color(0xFF2D261E);
   }
 
   Color get _subtitleColor {
-    return _isDarkMode
-        ? Colors.white60
-        : const Color(0xFF6B5E4E);
+    return _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
   }
 
   Color get _primaryColor {
-    return _isDarkMode
-        ? const Color(0xFF38BDF8)
-        : const Color(0xFFD97706);
+    return _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFD97706);
   }
 
   Color get _borderColor {
-    return _isDarkMode
-        ? const Color(0xFF334155)
-        : const Color(0xFFEFEBE3);
+    return _isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3);
   }
 
   Color get _buttonTextColor {
-    return _isDarkMode
-        ? const Color(0xFF0F172A)
-        : Colors.white;
+    return _isDarkMode ? const Color(0xFF0F172A) : Colors.white;
   }
 
   String _formatDuration(int totalSeconds) {
-    final safeSeconds = totalSeconds < 0
-        ? totalSeconds.abs()
-        : totalSeconds;
+    final safeSeconds = totalSeconds < 0 ? totalSeconds.abs() : totalSeconds;
 
     final hours = safeSeconds ~/ 3600;
     final minutes = (safeSeconds % 3600) ~/ 60;
@@ -166,21 +147,16 @@ class _ResultSummaryScreenState
         '${seconds.toString().padLeft(2, '0')}';
   }
 
-  BoxDecoration _cardDecoration({
-    double radius = 22,
-  }) {
+  BoxDecoration _cardDecoration({double radius = 22}) {
     return BoxDecoration(
       color: _cardColor,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(
-        color: _borderColor,
-      ),
+      border: Border.all(color: _borderColor),
       boxShadow: [
         BoxShadow(
           color: _isDarkMode
               ? Colors.black.withValues(alpha: 0.18)
-              : const Color(0xFF7A7062)
-                  .withValues(alpha: 0.07),
+              : const Color(0xFF7A7062).withValues(alpha: 0.07),
           blurRadius: 18,
           offset: const Offset(0, 7),
         ),
@@ -191,9 +167,7 @@ class _ResultSummaryScreenState
   void _goBackHome() {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (_) => const HomeScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
       (_) => false,
     );
   }
@@ -212,11 +186,7 @@ class _ResultSummaryScreenState
               color: _primaryColor.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              _resultIcon,
-              size: 48,
-              color: _primaryColor,
-            ),
+            child: Icon(_resultIcon, size: 48, color: _primaryColor),
           ),
           const SizedBox(height: 18),
           Text(
@@ -242,11 +212,7 @@ class _ResultSummaryScreenState
           Text(
             _resultMessage,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.5,
-              color: _subtitleColor,
-            ),
+            style: TextStyle(fontSize: 14, height: 1.5, color: _subtitleColor),
           ),
         ],
       ),
@@ -263,10 +229,7 @@ class _ResultSummaryScreenState
         children: [
           Row(
             children: [
-              Icon(
-                Icons.compare_arrows_rounded,
-                color: _primaryColor,
-              ),
+              Icon(Icons.compare_arrows_rounded, color: _primaryColor),
               const SizedBox(width: 9),
               Text(
                 'Time Comparison',
@@ -357,10 +320,7 @@ class _ResultSummaryScreenState
             textColor: _textColor,
             subtitleColor: _subtitleColor,
           ),
-          Divider(
-            height: 28,
-            color: _borderColor,
-          ),
+          Divider(height: 28, color: _borderColor),
           _SummaryRow(
             title: 'Target presentation time',
             value: _formattedTargetTime,
@@ -369,24 +329,16 @@ class _ResultSummaryScreenState
             textColor: _textColor,
             subtitleColor: _subtitleColor,
           ),
-          Divider(
-            height: 28,
-            color: _borderColor,
-          ),
+          Divider(height: 28, color: _borderColor),
           _SummaryRow(
             title: 'Time difference',
-            value: _targetTimeInSeconds <= 0
-                ? '-'
-                : _formattedDifference,
+            value: _targetTimeInSeconds <= 0 ? '-' : _formattedDifference,
             icon: Icons.difference_rounded,
             primaryColor: _primaryColor,
             textColor: _textColor,
             subtitleColor: _subtitleColor,
           ),
-          Divider(
-            height: 28,
-            color: _borderColor,
-          ),
+          Divider(height: 28, color: _borderColor),
           _SummaryRow(
             title: 'Last practiced',
             value: _lastPracticedTime,
@@ -423,26 +375,17 @@ class _ResultSummaryScreenState
       decoration: BoxDecoration(
         color: _primaryColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: _primaryColor.withValues(alpha: 0.22),
-        ),
+        border: Border.all(color: _primaryColor.withValues(alpha: 0.22)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.lightbulb_outline_rounded,
-            color: _primaryColor,
-          ),
+          Icon(Icons.lightbulb_outline_rounded, color: _primaryColor),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               tip,
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.5,
-                color: _textColor,
-              ),
+              style: TextStyle(fontSize: 14, height: 1.5, color: _textColor),
             ),
           ),
         ],
@@ -464,15 +407,10 @@ class _ResultSummaryScreenState
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        icon: const Icon(
-          Icons.home_outlined,
-        ),
+        icon: const Icon(Icons.home_outlined),
         label: const Text(
           'Back to Home',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
         ),
       ),
     );
@@ -481,16 +419,9 @@ class _ResultSummaryScreenState
   Widget _buildContent() {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          20,
-          18,
-          20,
-          30,
-        ),
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 30),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 760,
-          ),
+          constraints: const BoxConstraints(maxWidth: 760),
           child: Column(
             children: [
               _buildHeaderCard(),
@@ -511,55 +442,48 @@ class _ResultSummaryScreenState
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: _backgroundColor,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: _backgroundColor,
-          foregroundColor: _textColor,
-          elevation: 0,
-          titleSpacing: 20,
-          title: Row(
-            children: [
-              Icon(
-                Icons.mic_none_rounded,
-                color: _primaryColor,
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, isDarkMode, _) {
+        return PopScope(
+          canPop: false,
+          child: Scaffold(
+            backgroundColor: _backgroundColor,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: _backgroundColor,
+              foregroundColor: _textColor,
+              elevation: 0,
+              titleSpacing: 20,
+              title: Row(
+                children: [
+                  Icon(Icons.mic_none_rounded, color: _primaryColor),
+                  const SizedBox(width: 9),
+                  const Text(
+                    'Result Summary',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                  ),
+                ],
               ),
-              const SizedBox(width: 9),
-              const Text(
-                'Result Summary',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
+              actions: [
+                IconButton(
+                  onPressed: ThemeController.toggleTheme,
+                  icon: Icon(
+                    isDarkMode
+                        ? Icons.wb_sunny_outlined
+                        : Icons.dark_mode_outlined,
+                  ),
+                  tooltip: isDarkMode
+                      ? 'Switch to Warm Mode'
+                      : 'Switch to Dark Mode',
                 ),
-              ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _isDarkMode = !_isDarkMode;
-                });
-              },
-              icon: Icon(
-                _isDarkMode
-                    ? Icons.wb_sunny_outlined
-                    : Icons.dark_mode_outlined,
-              ),
-              tooltip: _isDarkMode
-                  ? 'Switch to Warm Mode'
-                  : 'Switch to Dark Mode',
+                const SizedBox(width: 8),
+              ],
             ),
-            const SizedBox(width: 8),
-          ],
-        ),
-        body: SafeArea(
-          child: _buildContent(),
-        ),
-      ),
+            body: SafeArea(child: _buildContent()),
+          ),
+        );
+      },
     );
   }
 }
@@ -589,26 +513,15 @@ class _TimeValue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 18,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? const Color(0xFF0F172A)
-            : const Color(0xFFFDFBF7),
+        color: isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFDFBF7),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: borderColor),
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 25,
-            color: primaryColor,
-          ),
+          Icon(icon, size: 25, color: primaryColor),
           const SizedBox(height: 10),
           Text(
             value,
@@ -623,10 +536,7 @@ class _TimeValue extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              color: subtitleColor,
-            ),
+            style: TextStyle(fontSize: 12, color: subtitleColor),
           ),
         ],
       ),
@@ -663,24 +573,14 @@ class _SummaryRow extends StatelessWidget {
             color: primaryColor.withValues(alpha: 0.11),
             borderRadius: BorderRadius.circular(13),
           ),
-          child: Icon(
-            icon,
-            size: 22,
-            color: primaryColor,
-          ),
+          child: Icon(icon, size: 22, color: primaryColor),
         ),
         const SizedBox(width: 13),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: subtitleColor,
-                ),
-              ),
+              Text(title, style: TextStyle(fontSize: 13, color: subtitleColor)),
               const SizedBox(height: 3),
               Text(
                 value,

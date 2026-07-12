@@ -16,42 +16,33 @@ class SlideManagementScreen extends StatefulWidget {
   });
 
   @override
-  State<SlideManagementScreen> createState() =>
-      _SlideManagementScreenState();
+  State<SlideManagementScreen> createState() => _SlideManagementScreenState();
 }
 
-class _SlideManagementScreenState
-    extends State<SlideManagementScreen> {
+class _SlideManagementScreenState extends State<SlideManagementScreen> {
   final List<Map<String, dynamic>> _slides = [];
 
   bool _isLoading = true;
   bool _isUploading = false;
-  bool _isDarkMode = false;
+  bool get _isDarkMode => ThemeController.isDarkMode.value;
   int? _processingIndex;
 
-  int get _targetTime =>
-      int.tryParse(widget.targetTime) ?? 60;
+  int get _targetTime => int.tryParse(widget.targetTime) ?? 60;
 
-  Color get primary => _isDarkMode
-      ? const Color(0xFF38BDF8)
-      : const Color(0xFFD97706);
+  Color get primary =>
+      _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFD97706);
 
-  Color get background => _isDarkMode
-      ? const Color(0xFF0F172A)
-      : const Color(0xFFFAF6EE);
+  Color get background =>
+      _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFAF6EE);
 
-  Color get card =>
-      _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
+  Color get card => _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
 
-  Color get text =>
-      _isDarkMode ? Colors.white : const Color(0xFF2D261E);
+  Color get text => _isDarkMode ? Colors.white : const Color(0xFF2D261E);
 
-  Color get subtitle =>
-      _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
+  Color get subtitle => _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
 
-  Color get border => _isDarkMode
-      ? const Color(0xFF334155)
-      : const Color(0xFFEFEBE3);
+  Color get border =>
+      _isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3);
 
   @override
   void initState() {
@@ -63,8 +54,7 @@ class _SlideManagementScreenState
     setState(() => _isLoading = true);
 
     try {
-      final data =
-          await ApiService.getSlides(widget.presentationId);
+      final data = await ApiService.getSlides(widget.presentationId);
 
       final loaded = <Map<String, dynamic>>[];
 
@@ -75,8 +65,7 @@ class _SlideManagementScreenState
         if (id != null) {
           try {
             final scripts = await ApiService.getScripts(id);
-            slide['scriptData'] =
-                scripts.isNotEmpty ? scripts.last : null;
+            slide['scriptData'] = scripts.isNotEmpty ? scripts.last : null;
           } catch (_) {
             slide['scriptData'] = null;
           }
@@ -107,35 +96,26 @@ class _SlideManagementScreenState
       ..showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor:
-              error ? Colors.redAccent : const Color(0xFF16A34A),
+          backgroundColor: error ? Colors.redAccent : const Color(0xFF16A34A),
           behavior: SnackBarBehavior.floating,
         ),
       );
   }
 
-  Future<bool> _confirm(
-    String title,
-    String content,
-  ) async {
+  Future<bool> _confirm(String title, String content) async {
     return await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
             backgroundColor: card,
             title: Text(title, style: TextStyle(color: text)),
-            content: Text(
-              content,
-              style: TextStyle(color: subtitle),
-            ),
+            content: Text(content, style: TextStyle(color: subtitle)),
             actions: [
               TextButton(
-                onPressed: () =>
-                    Navigator.pop(dialogContext, false),
+                onPressed: () => Navigator.pop(dialogContext, false),
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: () =>
-                    Navigator.pop(dialogContext, true),
+                onPressed: () => Navigator.pop(dialogContext, true),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
@@ -162,8 +142,7 @@ class _SlideManagementScreenState
     setState(() => _isUploading = true);
 
     try {
-      final success =
-          await ApiService.uploadPdfAndCreateSlides(
+      final success = await ApiService.uploadPdfAndCreateSlides(
         presentationId: widget.presentationId,
         pdfPath: path,
         targetTime: _targetTime,
@@ -266,10 +245,7 @@ class _SlideManagementScreenState
     final slide = _slides[index];
 
     if (_hasScript(slide)) {
-      _showMessage(
-        'Please delete the existing script first',
-        error: true,
-      );
+      _showMessage('Please delete the existing script first', error: true);
       return;
     }
 
@@ -304,8 +280,7 @@ class _SlideManagementScreenState
     required String title,
     required String initialText,
   }) async {
-    final controller =
-        TextEditingController(text: initialText);
+    final controller = TextEditingController(text: initialText);
 
     final result = await showDialog<String>(
       context: context,
@@ -332,14 +307,13 @@ class _SlideManagementScreenState
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(
-              dialogContext,
-              controller.text.trim(),
-            ),
+            onPressed: () =>
+                Navigator.pop(dialogContext, controller.text.trim()),
             style: ElevatedButton.styleFrom(
               backgroundColor: primary,
-              foregroundColor:
-                  _isDarkMode ? const Color(0xFF0F172A) : Colors.white,
+              foregroundColor: _isDarkMode
+                  ? const Color(0xFF0F172A)
+                  : Colors.white,
             ),
             child: const Text('Save'),
           ),
@@ -356,8 +330,7 @@ class _SlideManagementScreenState
 
     final content = await _showEditor(
       title: 'Edit Slide Content',
-      initialText:
-          slide['extractedTextClean']?.toString() ?? '',
+      initialText: slide['extractedTextClean']?.toString() ?? '',
     );
 
     if (content == null) return;
@@ -386,11 +359,8 @@ class _SlideManagementScreenState
     final slide = _slides[index];
 
     final content = await _showEditor(
-      title: _hasScript(slide)
-          ? 'Edit Script'
-          : 'Write Script',
-      initialText:
-          slide['scriptData']?['content']?.toString() ?? '',
+      title: _hasScript(slide) ? 'Edit Script' : 'Write Script',
+      initialText: slide['scriptData']?['content']?.toString() ?? '',
     );
 
     if (content == null || content.isEmpty) return;
@@ -398,10 +368,7 @@ class _SlideManagementScreenState
     await _saveScript(index, content);
   }
 
-  Future<void> _saveScript(
-    int index,
-    String content,
-  ) async {
+  Future<void> _saveScript(int index, String content) async {
     final slide = _slides[index];
     final script = slide['scriptData'];
     final slideId = slide['_id']?.toString();
@@ -459,8 +426,7 @@ class _SlideManagementScreenState
 
     if (!confirmed) return;
 
-    final success =
-        await ApiService.deleteScript(script['_id'].toString());
+    final success = await ApiService.deleteScript(script['_id'].toString());
 
     if (!mounted) return;
 
@@ -499,15 +465,13 @@ class _SlideManagementScreenState
   }
 
   bool _hasScript(Map<String, dynamic> slide) {
-    final content =
-        slide['scriptData']?['content']?.toString().trim() ?? '';
+    final content = slide['scriptData']?['content']?.toString().trim() ?? '';
 
     return content.isNotEmpty;
   }
 
   void _copyScript(Map<String, dynamic> slide) {
-    final content =
-        slide['scriptData']?['content']?.toString() ?? '';
+    final content = slide['scriptData']?['content']?.toString() ?? '';
 
     if (content.isEmpty) return;
 
@@ -516,8 +480,7 @@ class _SlideManagementScreenState
   }
 
   String _imageUrl(String path) {
-    final cleanPath =
-        path.startsWith('/') ? path.substring(1) : path;
+    final cleanPath = path.startsWith('/') ? path.substring(1) : path;
 
     return '${ApiService.baseUrl}/$cleanPath';
   }
@@ -561,11 +524,9 @@ class _SlideManagementScreenState
     final hasScript = _hasScript(slide);
     final isProcessing = _processingIndex == index;
 
-    final content =
-        slide['extractedTextClean']?.toString().trim();
+    final content = slide['extractedTextClean']?.toString().trim();
 
-    final script =
-        slide['scriptData']?['content']?.toString().trim();
+    final script = slide['scriptData']?['content']?.toString().trim();
 
     final imagePath = slide['imagePath']?.toString();
 
@@ -601,12 +562,8 @@ class _SlideManagementScreenState
                   ),
                 ),
               IconButton(
-                onPressed:
-                    isProcessing ? null : () => _deleteSlide(index),
-                icon: const Icon(
-                  Icons.delete_outline,
-                  color: Colors.redAccent,
-                ),
+                onPressed: isProcessing ? null : () => _deleteSlide(index),
+                icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
               ),
             ],
           ),
@@ -630,10 +587,7 @@ class _SlideManagementScreenState
           const SizedBox(height: 14),
           Text(
             'Extracted Content',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: text,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, color: text),
           ),
           const SizedBox(height: 6),
           Text(
@@ -648,13 +602,11 @@ class _SlideManagementScreenState
             spacing: 8,
             children: [
               TextButton(
-                onPressed:
-                    isProcessing ? null : () => _runOcr(index),
+                onPressed: isProcessing ? null : () => _runOcr(index),
                 child: const Text('Run OCR'),
               ),
               TextButton(
-                onPressed:
-                    isProcessing ? null : () => _editContent(index),
+                onPressed: isProcessing ? null : () => _editContent(index),
                 child: const Text('Edit Content'),
               ),
             ],
@@ -664,28 +616,20 @@ class _SlideManagementScreenState
             children: [
               Text(
                 'Script',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: text,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, color: text),
               ),
               const Spacer(),
               IconButton(
-                onPressed:
-                    hasScript ? () => _copyScript(slide) : null,
+                onPressed: hasScript ? () => _copyScript(slide) : null,
                 icon: const Icon(Icons.copy_rounded),
               ),
             ],
           ),
           Text(
-            script == null || script.isEmpty
-                ? 'No script yet'
-                : script,
+            script == null || script.isEmpty ? 'No script yet' : script,
             maxLines: 6,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: hasScript ? text : subtitle,
-            ),
+            style: TextStyle(color: hasScript ? text : subtitle),
           ),
           const SizedBox(height: 14),
           Row(
@@ -704,10 +648,7 @@ class _SlideManagementScreenState
                       value: 'Standard',
                       child: Text('Standard'),
                     ),
-                    DropdownMenuItem(
-                      value: 'Formal',
-                      child: Text('Formal'),
-                    ),
+                    DropdownMenuItem(value: 'Formal', child: Text('Formal')),
                   ],
                   onChanged: hasScript || isProcessing
                       ? null
@@ -735,12 +676,9 @@ class _SlideManagementScreenState
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed:
-                      isProcessing ? null : () => _editScript(index),
+                  onPressed: isProcessing ? null : () => _editScript(index),
                   icon: const Icon(Icons.edit_outlined),
-                  label: Text(
-                    hasScript ? 'Edit Script' : 'Write Script',
-                  ),
+                  label: Text(hasScript ? 'Edit Script' : 'Write Script'),
                 ),
               ),
               const SizedBox(width: 10),
@@ -765,17 +703,12 @@ class _SlideManagementScreenState
 
   Widget _buildBody() {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: primary),
-      );
+      return Center(child: CircularProgressIndicator(color: primary));
     }
 
     if (_slides.isEmpty) {
       return Center(
-        child: Text(
-          'No slides yet',
-          style: TextStyle(color: subtitle),
-        ),
+        child: Text('No slides yet', style: TextStyle(color: subtitle)),
       );
     }
 
@@ -791,71 +724,71 @@ class _SlideManagementScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: background,
-      appBar: AppBar(
-        backgroundColor: background,
-        foregroundColor: text,
-        elevation: 0,
-        title: const Text(
-          'Slide Management',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _loadSlides,
-            icon: const Icon(Icons.refresh),
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _isDarkMode = !_isDarkMode;
-              });
-            },
-            icon: Icon(
-              _isDarkMode
-                  ? Icons.wb_sunny_outlined
-                  : Icons.dark_mode_outlined,
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, isDarkMode, _) {
+        return Scaffold(
+          backgroundColor: background,
+          appBar: AppBar(
+            backgroundColor: background,
+            foregroundColor: text,
+            elevation: 0,
+            title: const Text(
+              'Slide Management',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildUploadButtons(),
-              const SizedBox(height: 16),
-              Expanded(child: _buildBody()),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed:
-                      _slides.isEmpty ? null : _goToPractice,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primary,
-                    foregroundColor: _isDarkMode
-                        ? const Color(0xFF0F172A)
-                        : Colors.white,
-                  ),
-                  icon: const Icon(
-                    Icons.record_voice_over_rounded,
-                  ),
-                  label: const Text(
-                    'Go to Practice Mode',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            actions: [
+              IconButton(
+                onPressed: _isLoading ? null : _loadSlides,
+                icon: const Icon(Icons.refresh),
+                tooltip: 'Refresh slides',
+              ),
+              IconButton(
+                onPressed: ThemeController.toggleTheme,
+                icon: Icon(
+                  isDarkMode
+                      ? Icons.wb_sunny_outlined
+                      : Icons.dark_mode_outlined,
                 ),
+                tooltip: isDarkMode
+                    ? 'Switch to Warm Mode'
+                    : 'Switch to Dark Mode',
               ),
             ],
           ),
-        ),
-      ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildUploadButtons(),
+                  const SizedBox(height: 16),
+                  Expanded(child: _buildBody()),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton.icon(
+                      onPressed: _slides.isEmpty ? null : _goToPractice,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primary,
+                        foregroundColor: isDarkMode
+                            ? const Color(0xFF0F172A)
+                            : Colors.white,
+                      ),
+                      icon: const Icon(Icons.record_voice_over_rounded),
+                      label: const Text(
+                        'Go to Practice Mode',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

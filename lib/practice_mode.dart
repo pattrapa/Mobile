@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/api_service.dart';
 import 'package:flutter_project/result_summary.dart';
+import 'package:flutter_project/theme_controller.dart';
 
 class PracticeModeScreen extends StatefulWidget {
   final String presentationId;
@@ -32,7 +33,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
 
   bool _isRunning = false;
   bool _canPauseResume = true;
-  bool _isDarkMode = false;
+  bool get _isDarkMode => ThemeController.isDarkMode.value;
 
   late Future<void> _loadDataFuture;
 
@@ -50,13 +51,9 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
   }
 
   Future<void> _loadData() async {
-    final slideData = await ApiService.getSlides(
-      widget.presentationId,
-    );
+    final slideData = await ApiService.getSlides(widget.presentationId);
 
-    _slides = slideData
-        .map((item) => Map<String, dynamic>.from(item))
-        .toList();
+    _slides = slideData.map((item) => Map<String, dynamic>.from(item)).toList();
 
     await Future.wait(
       _slides.map((slide) async {
@@ -72,8 +69,8 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
 
             _slideScripts[slideId] =
                 latestScript['content']?.toString().trim().isNotEmpty == true
-                    ? latestScript['content'].toString()
-                    : 'No script found';
+                ? latestScript['content'].toString()
+                : 'No script found';
           } else {
             _slideScripts[slideId] = 'No script found';
           }
@@ -144,16 +141,13 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
   void _startTicking() {
     _timer?.cancel();
 
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (_) {
-        if (!mounted) return;
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
 
-        setState(() {
-          _seconds++;
-        });
-      },
-    );
+      setState(() {
+        _seconds++;
+      });
+    });
   }
 
   Future<void> _finishPractice() async {
@@ -162,9 +156,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
     final shouldFinish = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        final textColor = _isDarkMode
-            ? Colors.white
-            : const Color(0xFF2D261E);
+        final textColor = _isDarkMode ? Colors.white : const Color(0xFF2D261E);
 
         final subtitleColor = _isDarkMode
             ? Colors.white70
@@ -179,10 +171,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
           ),
           title: Row(
             children: [
-              Icon(
-                Icons.flag_outlined,
-                color: _primaryColor,
-              ),
+              Icon(Icons.flag_outlined, color: _primaryColor),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -197,22 +186,14 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
           ),
           content: Text(
             'Your practice time is ${_formatTime(_seconds)}. Do you want to finish and view the summary?',
-            style: TextStyle(
-              color: subtitleColor,
-              height: 1.5,
-            ),
+            style: TextStyle(color: subtitleColor, height: 1.5),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext, false);
               },
-              child: Text(
-                'Continue',
-                style: TextStyle(
-                  color: subtitleColor,
-                ),
-              ),
+              child: Text('Continue', style: TextStyle(color: subtitleColor)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -324,56 +305,38 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
   }
 
   Color get _backgroundColor {
-    return _isDarkMode
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFFAF6EE);
+    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFAF6EE);
   }
 
   Color get _cardColor {
-    return _isDarkMode
-        ? const Color(0xFF1E293B)
-        : Colors.white;
+    return _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
   }
 
   Color get _textColor {
-    return _isDarkMode
-        ? Colors.white
-        : const Color(0xFF2D261E);
+    return _isDarkMode ? Colors.white : const Color(0xFF2D261E);
   }
 
   Color get _subtitleColor {
-    return _isDarkMode
-        ? Colors.white60
-        : const Color(0xFF6B5E4E);
+    return _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
   }
 
   Color get _primaryColor {
-    return _isDarkMode
-        ? const Color(0xFF38BDF8)
-        : const Color(0xFFD97706);
+    return _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFD97706);
   }
 
   Color get _borderColor {
-    return _isDarkMode
-        ? const Color(0xFF334155)
-        : const Color(0xFFEFEBE3);
+    return _isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3);
   }
 
   Color get _buttonTextColor {
-    return _isDarkMode
-        ? const Color(0xFF0F172A)
-        : Colors.white;
+    return _isDarkMode ? const Color(0xFF0F172A) : Colors.white;
   }
 
-  BoxDecoration _cardDecoration({
-    double radius = 22,
-  }) {
+  BoxDecoration _cardDecoration({double radius = 22}) {
     return BoxDecoration(
       color: _cardColor,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(
-        color: _borderColor,
-      ),
+      border: Border.all(color: _borderColor),
       boxShadow: [
         BoxShadow(
           color: _isDarkMode
@@ -393,19 +356,10 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
 
         return Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 1180,
-            ),
+            constraints: const BoxConstraints(maxWidth: 1180),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                16,
-                20,
-                20,
-              ),
-              child: isWideScreen
-                  ? _buildWideLayout()
-                  : _buildCompactLayout(),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+              child: isWideScreen ? _buildWideLayout() : _buildCompactLayout(),
             ),
           ),
         );
@@ -422,18 +376,13 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                flex: 6,
-                child: _buildSlideViewer(),
-              ),
+              Expanded(flex: 6, child: _buildSlideViewer()),
               const SizedBox(width: 18),
               Expanded(
                 flex: 4,
                 child: Column(
                   children: [
-                    Expanded(
-                      child: _buildScriptBox(),
-                    ),
+                    Expanded(child: _buildScriptBox()),
                     const SizedBox(height: 18),
                     _buildTimerBox(),
                   ],
@@ -457,15 +406,9 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
           child: ListView(
             padding: const EdgeInsets.only(bottom: 8),
             children: [
-              SizedBox(
-                height: 300,
-                child: _buildSlideViewer(),
-              ),
+              SizedBox(height: 300, child: _buildSlideViewer()),
               const SizedBox(height: 16),
-              SizedBox(
-                height: 260,
-                child: _buildScriptBox(),
-              ),
+              SizedBox(height: 260, child: _buildScriptBox()),
               const SizedBox(height: 16),
               _buildTimerBox(),
               const SizedBox(height: 16),
@@ -539,37 +482,23 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
     required String value,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 10,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: _isDarkMode
-            ? const Color(0xFF0F172A)
-            : const Color(0xFFFDFBF7),
+        color: _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFDFBF7),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: _borderColor,
-        ),
+        border: Border.all(color: _borderColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 19,
-            color: _primaryColor,
-          ),
+          Icon(icon, size: 19, color: _primaryColor),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: _subtitleColor,
-                ),
+                style: TextStyle(fontSize: 11, color: _subtitleColor),
               ),
               Text(
                 value,
@@ -593,19 +522,10 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              18,
-              16,
-              18,
-              12,
-            ),
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
             child: Row(
               children: [
-                Icon(
-                  Icons.slideshow_rounded,
-                  color: _primaryColor,
-                  size: 22,
-                ),
+                Icon(Icons.slideshow_rounded, color: _primaryColor, size: 22),
                 const SizedBox(width: 9),
                 Text(
                   'Slide ${_currentSlideIndex + 1} of ${_slides.length}',
@@ -617,13 +537,9 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                 ),
                 const Spacer(),
                 IconButton(
-                  onPressed: _currentSlideIndex > 0
-                      ? _goToPreviousSlide
-                      : null,
+                  onPressed: _currentSlideIndex > 0 ? _goToPreviousSlide : null,
                   tooltip: 'Previous slide',
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                  ),
+                  icon: const Icon(Icons.chevron_left_rounded),
                   color: _primaryColor,
                 ),
                 IconButton(
@@ -631,18 +547,13 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                       ? _goToNextSlide
                       : null,
                   tooltip: 'Next slide',
-                  icon: const Icon(
-                    Icons.chevron_right_rounded,
-                  ),
+                  icon: const Icon(Icons.chevron_right_rounded),
                   color: _primaryColor,
                 ),
               ],
             ),
           ),
-          Divider(
-            height: 1,
-            color: _borderColor,
-          ),
+          Divider(height: 1, color: _borderColor),
           Expanded(
             child: Container(
               margin: const EdgeInsets.all(14),
@@ -651,9 +562,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                     ? const Color(0xFF0F172A)
                     : const Color(0xFFF8F7F4),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: _borderColor,
-                ),
+                border: Border.all(color: _borderColor),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
@@ -682,11 +591,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                       child: Image.network(
                         imageUrl,
                         fit: BoxFit.contain,
-                        loadingBuilder: (
-                          context,
-                          child,
-                          loadingProgress,
-                        ) {
+                        loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) {
                             return child;
                           }
@@ -711,9 +616,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-              bottom: 16,
-            ),
+            padding: const EdgeInsets.only(bottom: 16),
             child: _buildPageIndicator(),
           ),
         ],
@@ -721,26 +624,14 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
     );
   }
 
-  Widget _buildMissingImage({
-    required IconData icon,
-    required String message,
-  }) {
+  Widget _buildMissingImage({required IconData icon, required String message}) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 52,
-            color: _subtitleColor,
-          ),
+          Icon(icon, size: 52, color: _subtitleColor),
           const SizedBox(height: 10),
-          Text(
-            message,
-            style: TextStyle(
-              color: _subtitleColor,
-            ),
-          ),
+          Text(message, style: TextStyle(color: _subtitleColor)),
         ],
       ),
     );
@@ -762,25 +653,20 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        _slides.length,
-        (index) {
-          final isActive = _currentSlideIndex == index;
+      children: List.generate(_slides.length, (index) {
+        final isActive = _currentSlideIndex == index;
 
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: isActive ? 22 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: isActive
-                  ? _primaryColor
-                  : _borderColor,
-            ),
-          );
-        },
-      ),
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          width: isActive ? 22 : 8,
+          height: 8,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: isActive ? _primaryColor : _borderColor,
+          ),
+        );
+      }),
     );
   }
 
@@ -792,19 +678,10 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              18,
-              16,
-              18,
-              12,
-            ),
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
             child: Row(
               children: [
-                Icon(
-                  Icons.notes_rounded,
-                  color: _primaryColor,
-                  size: 22,
-                ),
+                Icon(Icons.notes_rounded, color: _primaryColor, size: 22),
                 const SizedBox(width: 9),
                 Text(
                   'Presentation Script',
@@ -817,20 +694,13 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
               ],
             ),
           ),
-          Divider(
-            height: 1,
-            color: _borderColor,
-          ),
+          Divider(height: 1, color: _borderColor),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(18),
               child: SelectableText(
                 _currentScript(),
-                style: TextStyle(
-                  fontSize: 16,
-                  height: 1.7,
-                  color: _textColor,
-                ),
+                style: TextStyle(fontSize: 16, height: 1.7, color: _textColor),
               ),
             ),
           ),
@@ -869,9 +739,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
               Icon(
                 statusIcon,
                 size: 16,
-                color: _isRunning
-                    ? Colors.redAccent
-                    : _subtitleColor,
+                color: _isRunning ? Colors.redAccent : _subtitleColor,
               ),
               const SizedBox(width: 7),
               Text(
@@ -897,10 +765,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
           const SizedBox(height: 4),
           Text(
             'Target ${_formatTargetTime()}',
-            style: TextStyle(
-              fontSize: 13,
-              color: _subtitleColor,
-            ),
+            style: TextStyle(fontSize: 13, color: _subtitleColor),
           ),
           const SizedBox(height: 18),
           Wrap(
@@ -920,18 +785,14 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                 icon: Icons.pause_rounded,
                 color: const Color(0xFFF59E0B),
                 foregroundColor: Colors.white,
-                onPressed: _isRunning && _canPauseResume
-                    ? _pauseTimer
-                    : null,
+                onPressed: _isRunning && _canPauseResume ? _pauseTimer : null,
               ),
               _TimerButton(
                 label: 'Resume',
                 icon: Icons.play_circle_outline_rounded,
                 color: const Color(0xFF16A34A),
                 foregroundColor: Colors.white,
-                onPressed: !_isRunning &&
-                        _canPauseResume &&
-                        _seconds > 0
+                onPressed: !_isRunning && _canPauseResume && _seconds > 0
                     ? _resumeTimer
                     : null,
               ),
@@ -940,8 +801,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                 icon: Icons.stop_rounded,
                 color: Colors.redAccent,
                 foregroundColor: Colors.white,
-                onPressed: _isRunning ||
-                        (_seconds > 0 && _canPauseResume)
+                onPressed: _isRunning || (_seconds > 0 && _canPauseResume)
                     ? _stopTimer
                     : null,
               ),
@@ -972,15 +832,10 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        icon: const Icon(
-          Icons.flag_rounded,
-        ),
+        icon: const Icon(Icons.flag_rounded),
         label: const Text(
           'Finish Practice',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
         ),
       ),
     );
@@ -993,15 +848,11 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(
-              color: _primaryColor,
-            ),
+            CircularProgressIndicator(color: _primaryColor),
             const SizedBox(height: 16),
             Text(
               'Loading practice session...',
-              style: TextStyle(
-                color: _subtitleColor,
-              ),
+              style: TextStyle(color: _subtitleColor),
             ),
           ],
         ),
@@ -1009,23 +860,16 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
     );
   }
 
-  Widget _buildEmptyOrError({
-    required bool hasError,
-  }) {
+  Widget _buildEmptyOrError({required bool hasError}) {
     return Container(
       color: _backgroundColor,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 430,
-            ),
+            constraints: const BoxConstraints(maxWidth: 430),
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 28,
-                vertical: 34,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 34),
               decoration: _cardDecoration(),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1042,16 +886,12 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                           ? Icons.error_outline_rounded
                           : Icons.slideshow_outlined,
                       size: 42,
-                      color: hasError
-                          ? Colors.redAccent
-                          : _primaryColor,
+                      color: hasError ? Colors.redAccent : _primaryColor,
                     ),
                   ),
                   const SizedBox(height: 18),
                   Text(
-                    hasError
-                        ? 'Unable to load practice'
-                        : 'No slides found',
+                    hasError ? 'Unable to load practice' : 'No slides found',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,
@@ -1090,14 +930,10 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    icon: const Icon(
-                      Icons.refresh_rounded,
-                    ),
+                    icon: const Icon(Icons.refresh_rounded),
                     label: const Text(
                       'Try again',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
                 ],
@@ -1111,73 +947,63 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _backgroundColor,
-      appBar: AppBar(
-        backgroundColor: _backgroundColor,
-        foregroundColor: _textColor,
-        elevation: 0,
-        titleSpacing: 8,
-        title: Row(
-          children: [
-            Icon(
-              Icons.mic_none_rounded,
-              color: _primaryColor,
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, isDarkMode, _) {
+        return Scaffold(
+          backgroundColor: _backgroundColor,
+          appBar: AppBar(
+            backgroundColor: _backgroundColor,
+            foregroundColor: _textColor,
+            elevation: 0,
+            titleSpacing: 8,
+            title: Row(
+              children: [
+                Icon(Icons.mic_none_rounded, color: _primaryColor),
+                const SizedBox(width: 9),
+                const Text(
+                  'Practice Mode',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+                ),
+              ],
             ),
-            const SizedBox(width: 9),
-            const Text(
-              'Practice Mode',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 20,
+            actions: [
+              IconButton(
+                onPressed: ThemeController.toggleTheme,
+                tooltip: isDarkMode
+                    ? 'Switch to Warm Mode'
+                    : 'Switch to Dark Mode',
+                icon: Icon(
+                  isDarkMode
+                      ? Icons.wb_sunny_outlined
+                      : Icons.dark_mode_outlined,
+                ),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _isDarkMode = !_isDarkMode;
-              });
-            },
-            tooltip: _isDarkMode
-                ? 'Switch to Warm Mode'
-                : 'Switch to Dark Mode',
-            icon: Icon(
-              _isDarkMode
-                  ? Icons.wb_sunny_outlined
-                  : Icons.dark_mode_outlined,
+              const SizedBox(width: 8),
+            ],
+          ),
+          body: SafeArea(
+            child: FutureBuilder<void>(
+              future: _loadDataFuture,
+              builder: (_, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLoading();
+                }
+
+                if (snapshot.hasError) {
+                  return _buildEmptyOrError(hasError: true);
+                }
+
+                if (_slides.isEmpty) {
+                  return _buildEmptyOrError(hasError: false);
+                }
+
+                return _buildMainContent();
+              },
             ),
           ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        child: FutureBuilder<void>(
-          future: _loadDataFuture,
-          builder: (_, snapshot) {
-            if (snapshot.connectionState ==
-                ConnectionState.waiting) {
-              return _buildLoading();
-            }
-
-            if (snapshot.hasError) {
-              return _buildEmptyOrError(
-                hasError: true,
-              );
-            }
-
-            if (_slides.isEmpty) {
-              return _buildEmptyOrError(
-                hasError: false,
-              );
-            }
-
-            return _buildMainContent();
-          },
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -1205,27 +1031,13 @@ class _TimerButton extends StatelessWidget {
         backgroundColor: color,
         foregroundColor: foregroundColor,
         disabledBackgroundColor: color.withValues(alpha: 0.28),
-        disabledForegroundColor:
-            foregroundColor.withValues(alpha: 0.55),
+        disabledForegroundColor: foregroundColor.withValues(alpha: 0.55),
         elevation: 0,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 13,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(13),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
       ),
-      icon: Icon(
-        icon,
-        size: 19,
-      ),
-      label: Text(
-        label,
-        style: const TextStyle(
-          fontWeight: FontWeight.w700,
-        ),
-      ),
+      icon: Icon(icon, size: 19),
+      label: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
     );
   }
 }
