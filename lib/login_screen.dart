@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/api_service.dart';
+import 'package:flutter_project/decorative_background.dart';
 import 'package:flutter_project/home.dart';
 import 'package:flutter_project/theme_controller.dart';
 
@@ -16,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _usernameController =
       TextEditingController();
+
   final TextEditingController _passwordController =
       TextEditingController();
 
@@ -65,8 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final isSuccess =
-          await ApiService.login(username, password);
+      final isSuccess = await ApiService.login(
+        username,
+        password,
+      );
 
       if (!mounted) return;
 
@@ -95,54 +99,41 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  InputDecoration _buildInputDecoration({
+  InputDecoration _inputDecoration({
     required String label,
-    required IconData prefixIcon,
-    required Color primaryColor,
-    required Color subtitleColor,
-    required Color fillColor,
-    required Color borderColor,
-    Widget? suffixIcon,
+    required IconData icon,
+    required Color primary,
+    required Color subtitle,
+    required Color fill,
+    required Color border,
+    Widget? suffix,
   }) {
     return InputDecoration(
       labelText: label,
       labelStyle: TextStyle(
-        color: subtitleColor,
+        color: subtitle,
       ),
       prefixIcon: Icon(
-        prefixIcon,
-        color: primaryColor,
+        icon,
+        color: primary,
       ),
-      suffixIcon: suffixIcon,
+      suffixIcon: suffix,
       filled: true,
-      fillColor: fillColor,
+      fillColor: fill,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 18,
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(
-          color: borderColor,
+          color: border,
         ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(
-          color: primaryColor,
-          width: 2,
-        ),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Colors.redAccent,
-        ),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Colors.redAccent,
+          color: primary,
           width: 2,
         ),
       ),
@@ -154,306 +145,408 @@ class _LoginScreenState extends State<LoginScreen> {
     return ValueListenableBuilder<bool>(
       valueListenable: ThemeController.isDarkMode,
       builder: (context, isDarkMode, _) {
-        final backgroundColor = isDarkMode
-            ? const Color(0xFF0F172A)
-            : const Color(0xFFFAF6EE);
+        final background = isDarkMode
+            ? const Color(0xFF0B1220)
+            : const Color(0xFFFFF9F1);
 
-        final cardColor = isDarkMode
-            ? const Color(0xFF1E293B)
-            : Colors.white;
+        final card = isDarkMode
+            ? const Color(0xFF152238).withValues(alpha: 0.94)
+            : Colors.white.withValues(alpha: 0.94);
 
-        final textColor = isDarkMode
+        final text = isDarkMode
             ? Colors.white
-            : const Color(0xFF2D261E);
+            : const Color(0xFF29231D);
 
-        final subtitleColor = isDarkMode
+        final subtitle = isDarkMode
             ? Colors.white60
-            : const Color(0xFF6B5E4E);
+            : const Color(0xFF74685A);
 
-        final primaryColor = isDarkMode
+        final primary = isDarkMode
             ? const Color(0xFF38BDF8)
-            : const Color(0xFFD97706);
+            : const Color(0xFFF97316);
 
-        final inputFillColor = isDarkMode
-            ? const Color(0xFF0F172A)
-            : const Color(0xFFFDFBF7);
+        final secondary = isDarkMode
+            ? const Color(0xFF6366F1)
+            : const Color(0xFFF59E0B);
 
-        final borderColor = isDarkMode
-            ? const Color(0xFF334155)
-            : const Color(0xFFEFEBE3);
+        final inputFill = isDarkMode
+            ? const Color(0xFF0F1A2C)
+            : const Color(0xFFFFFCF8);
+
+        final border = isDarkMode
+            ? const Color(0xFF2C405D)
+            : const Color(0xFFF1E5D6);
 
         return Scaffold(
-          backgroundColor: backgroundColor,
+          backgroundColor: background,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             actions: [
-              IconButton(
-                onPressed: ThemeController.toggleTheme,
-                icon: Icon(
-                  isDarkMode
-                      ? Icons.wb_sunny_outlined
-                      : Icons.dark_mode_outlined,
-                  color: primaryColor,
+              Container(
+                margin: const EdgeInsets.only(
+                  right: 14,
+                  top: 6,
+                  bottom: 6,
                 ),
-                tooltip: isDarkMode
-                    ? 'Switch to Warm Mode'
-                    : 'Switch to Dark Mode',
+                decoration: BoxDecoration(
+                  color: card,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: border,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: ThemeController.toggleTheme,
+                  icon: Icon(
+                    isDarkMode
+                        ? Icons.wb_sunny_outlined
+                        : Icons.dark_mode_outlined,
+                    color: primary,
+                  ),
+                  tooltip: isDarkMode
+                      ? 'Switch to Warm Mode'
+                      : 'Switch to Dark Mode',
+                ),
               ),
-              const SizedBox(width: 10),
             ],
           ),
-          body: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 24,
-                ),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 460,
+          body: DecorativeBackground(
+            isDarkMode: isDarkMode,
+            child: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                    24,
+                    8,
+                    24,
+                    30,
                   ),
-                  child: Column(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 92,
-                        height: 92,
-                        decoration: BoxDecoration(
-                          color: primaryColor.withValues(
-                            alpha: 0.12,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: 460,
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 104,
+                          height: 104,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                primary,
+                                secondary,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primary.withValues(
+                                  alpha: 0.28,
+                                ),
+                                blurRadius: 28,
+                                offset: const Offset(0, 12),
+                              ),
+                            ],
                           ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.mic_none_rounded,
-                          size: 52,
-                          color: primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'SpeakFlow',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w800,
-                          color: textColor,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Practice your presentation with confidence',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: subtitleColor,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 38),
-                      AnimatedContainer(
-                        duration:
-                            const Duration(milliseconds: 250),
-                        padding: const EdgeInsets.all(26),
-                        decoration: BoxDecoration(
-                          color: cardColor,
-                          borderRadius:
-                              BorderRadius.circular(24),
-                          border: Border.all(
-                            color: borderColor,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              const Icon(
+                                Icons.chat_bubble_rounded,
+                                size: 72,
+                                color: Colors.white,
+                              ),
+                              Icon(
+                                Icons.co_present_rounded,
+                                size: 38,
+                                color: primary,
+                              ),
+                            ],
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: isDarkMode
-                                  ? Colors.black.withValues(
-                                      alpha: 0.22,
-                                    )
-                                  : const Color(0xFF7A7062)
-                                      .withValues(
-                                      alpha: 0.08,
-                                    ),
-                              blurRadius: 24,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
                         ),
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              'Sign In',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
-                                color: textColor,
-                              ),
+                        const SizedBox(height: 24),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 38,
+                              fontWeight: FontWeight.w900,
+                              color: text,
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Enter your account to start practicing',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: subtitleColor,
+                            children: [
+                              const TextSpan(
+                                text: 'Speak',
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                            TextField(
-                              controller: _usernameController,
-                              focusNode: _usernameFocusNode,
-                              enabled: !_isLoading,
-                              keyboardType: TextInputType.text,
-                              textInputAction:
-                                  TextInputAction.next,
-                              style: TextStyle(
-                                color: textColor,
-                              ),
-                              onSubmitted: (_) {
-                                FocusScope.of(context)
-                                    .requestFocus(
-                                  _passwordFocusNode,
-                                );
-                              },
-                              decoration:
-                                  _buildInputDecoration(
-                                label: 'Username',
-                                prefixIcon: Icons
-                                    .person_outline_rounded,
-                                primaryColor: primaryColor,
-                                subtitleColor: subtitleColor,
-                                fillColor: inputFillColor,
-                                borderColor: borderColor,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextField(
-                              controller: _passwordController,
-                              focusNode: _passwordFocusNode,
-                              enabled: !_isLoading,
-                              obscureText: _obscurePassword,
-                              textInputAction:
-                                  TextInputAction.done,
-                              style: TextStyle(
-                                color: textColor,
-                              ),
-                              onSubmitted: (_) {
-                                _handleLogin();
-                              },
-                              decoration:
-                                  _buildInputDecoration(
-                                label: 'Password',
-                                prefixIcon:
-                                    Icons.lock_outline_rounded,
-                                primaryColor: primaryColor,
-                                subtitleColor: subtitleColor,
-                                fillColor: inputFillColor,
-                                borderColor: borderColor,
-                                suffixIcon: IconButton(
-                                  onPressed: _isLoading
-                                      ? null
-                                      : () {
-                                          setState(() {
-                                            _obscurePassword =
-                                                !_obscurePassword;
-                                          });
-                                        },
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? Icons
-                                            .visibility_off_outlined
-                                        : Icons
-                                            .visibility_outlined,
-                                    color: subtitleColor,
-                                  ),
-                                  tooltip: _obscurePassword
-                                      ? 'Show password'
-                                      : 'Hide password',
+                              TextSpan(
+                                text: 'Flow',
+                                style: TextStyle(
+                                  color: primary,
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Practice presentations.\n'
+                          'Present with confidence.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15,
+                            height: 1.5,
+                            color: subtitle,
+                          ),
+                        ),
+                        const SizedBox(height: 34),
+                        Container(
+                          padding: const EdgeInsets.all(26),
+                          decoration: BoxDecoration(
+                            color: card,
+                            borderRadius: BorderRadius.circular(28),
+                            border: Border.all(
+                              color: border,
                             ),
-                            const SizedBox(height: 26),
-                            SizedBox(
-                              height: 54,
-                              child: ElevatedButton(
-                                onPressed: _isLoading
-                                    ? null
-                                    : _handleLogin,
-                                style:
-                                    ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                  disabledBackgroundColor:
-                                      primaryColor.withValues(
-                                    alpha: 0.55,
-                                  ),
-                                  foregroundColor: isDarkMode
-                                      ? const Color(0xFF0F172A)
-                                      : Colors.white,
-                                  elevation: 0,
-                                  shape:
-                                      RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(
-                                      14,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(
+                                  alpha: isDarkMode
+                                      ? 0.22
+                                      : 0.07,
+                                ),
+                                blurRadius: 30,
+                                offset: const Offset(0, 14),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 5,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                      color: primary,
+                                      borderRadius:
+                                          BorderRadius.circular(10),
                                     ),
                                   ),
-                                ),
-                                child: _isLoading
-                                    ? SizedBox(
-                                        width: 22,
-                                        height: 22,
-                                        child:
-                                            CircularProgressIndicator(
-                                          strokeWidth: 2.5,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<
-                                                  Color>(
-                                            isDarkMode
-                                                ? const Color(
-                                                    0xFF0F172A,
-                                                  )
-                                                : Colors.white,
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Welcome back',
+                                          style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight:
+                                                FontWeight.w800,
+                                            color: text,
                                           ),
                                         ),
-                                      )
-                                    : const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .center,
-                                        children: [
-                                          Icon(
-                                            Icons.login_rounded,
-                                            size: 20,
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          'Sign in to continue practicing',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: subtitle,
                                           ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            'Sign In',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                                  FontWeight.w700,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                controller:
+                                    _usernameController,
+                                focusNode:
+                                    _usernameFocusNode,
+                                enabled: !_isLoading,
+                                keyboardType:
+                                    TextInputType.text,
+                                textInputAction:
+                                    TextInputAction.next,
+                                style: TextStyle(
+                                  color: text,
+                                ),
+                                onSubmitted: (_) {
+                                  FocusScope.of(context)
+                                      .requestFocus(
+                                    _passwordFocusNode,
+                                  );
+                                },
+                                decoration:
+                                    _inputDecoration(
+                                  label: 'Username',
+                                  icon: Icons
+                                      .person_outline_rounded,
+                                  primary: primary,
+                                  subtitle: subtitle,
+                                  fill: inputFill,
+                                  border: border,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              TextField(
+                                controller:
+                                    _passwordController,
+                                focusNode:
+                                    _passwordFocusNode,
+                                enabled: !_isLoading,
+                                obscureText:
+                                    _obscurePassword,
+                                textInputAction:
+                                    TextInputAction.done,
+                                style: TextStyle(
+                                  color: text,
+                                ),
+                                onSubmitted: (_) {
+                                  _handleLogin();
+                                },
+                                decoration:
+                                    _inputDecoration(
+                                  label: 'Password',
+                                  icon: Icons
+                                      .lock_outline_rounded,
+                                  primary: primary,
+                                  subtitle: subtitle,
+                                  fill: inputFill,
+                                  border: border,
+                                  suffix: IconButton(
+                                    onPressed: _isLoading
+                                        ? null
+                                        : () {
+                                            setState(() {
+                                              _obscurePassword =
+                                                  !_obscurePassword;
+                                            });
+                                          },
+                                    icon: Icon(
+                                      _obscurePassword
+                                          ? Icons
+                                              .visibility_off_outlined
+                                          : Icons
+                                              .visibility_outlined,
+                                      color: subtitle,
+                                    ),
+                                    tooltip: _obscurePassword
+                                        ? 'Show password'
+                                        : 'Hide password',
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              SizedBox(
+                                height: 56,
+                                child: ElevatedButton(
+                                  onPressed: _isLoading
+                                      ? null
+                                      : _handleLogin,
+                                  style: ElevatedButton
+                                      .styleFrom(
+                                    backgroundColor:
+                                        primary,
+                                    disabledBackgroundColor:
+                                        primary.withValues(
+                                      alpha: 0.55,
+                                    ),
+                                    foregroundColor:
+                                        isDarkMode
+                                            ? const Color(
+                                                0xFF07111F,
+                                              )
+                                            : Colors.white,
+                                    elevation: 0,
+                                    shape:
+                                        RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(
+                                        16,
+                                      ),
+                                    ),
+                                  ),
+                                  child: _isLoading
+                                      ? SizedBox(
+                                          width: 22,
+                                          height: 22,
+                                          child:
+                                              CircularProgressIndicator(
+                                            strokeWidth: 2.5,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<
+                                                    Color>(
+                                              isDarkMode
+                                                  ? const Color(
+                                                      0xFF07111F,
+                                                    )
+                                                  : Colors.white,
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        )
+                                      : const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center,
+                                          children: [
+                                            Text(
+                                              'Sign In',
+                                              style:
+                                                  TextStyle(
+                                                fontSize: 16,
+                                                fontWeight:
+                                                    FontWeight
+                                                        .w800,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Icon(
+                                              Icons
+                                                  .arrow_forward_rounded,
+                                              size: 20,
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.graphic_eq_rounded,
+                              color: primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                'Improve timing, pacing, and delivery',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: subtitle,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Improve your timing, pacing, and delivery',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: subtitleColor,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
