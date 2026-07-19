@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_project/api_service.dart';
+import 'package:flutter_project/decorative_background.dart';
 import 'package:flutter_project/slide_management.dart';
 import 'package:flutter_project/theme_controller.dart';
 
@@ -21,22 +22,83 @@ class PresentationScreen extends StatefulWidget {
   });
 
   @override
-  State<PresentationScreen> createState() => _PresentationScreenState();
+  State<PresentationScreen> createState() =>
+      _PresentationScreenState();
 }
 
 class _PresentationScreenState extends State<PresentationScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _titleController =
+      TextEditingController();
+
+  final TextEditingController _descriptionController =
+      TextEditingController();
+
+  final TextEditingController _timeController =
+      TextEditingController();
 
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _descriptionFocusNode = FocusNode();
   final FocusNode _timeFocusNode = FocusNode();
 
   bool _isLoading = false;
+
   bool get _isDarkMode => ThemeController.isDarkMode.value;
+
+  Color get _backgroundColor {
+    return _isDarkMode
+        ? const Color(0xFF0B1220)
+        : const Color(0xFFFFF9F1);
+  }
+
+  Color get _cardColor {
+    return _isDarkMode
+        ? const Color(0xFF152238)
+        : Colors.white;
+  }
+
+  Color get _textColor {
+    return _isDarkMode
+        ? Colors.white
+        : const Color(0xFF29231D);
+  }
+
+  Color get _subtitleColor {
+    return _isDarkMode
+        ? Colors.white60
+        : const Color(0xFF74685A);
+  }
+
+  Color get _primaryColor {
+    return _isDarkMode
+        ? const Color(0xFF38BDF8)
+        : const Color(0xFFF97316);
+  }
+
+  Color get _secondaryColor {
+    return _isDarkMode
+        ? const Color(0xFF6366F1)
+        : const Color(0xFFF59E0B);
+  }
+
+  Color get _inputColor {
+    return _isDarkMode
+        ? const Color(0xFF0F1A2C)
+        : const Color(0xFFFFFCF8);
+  }
+
+  Color get _borderColor {
+    return _isDarkMode
+        ? const Color(0xFF2C405D)
+        : const Color(0xFFF1E5D6);
+  }
+
+  Color get _buttonTextColor {
+    return _isDarkMode
+        ? const Color(0xFF07111F)
+        : Colors.white;
+  }
 
   @override
   void initState() {
@@ -62,39 +124,10 @@ class _PresentationScreenState extends State<PresentationScreen> {
     super.dispose();
   }
 
-  Color get _backgroundColor {
-    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFAF6EE);
-  }
-
-  Color get _cardColor {
-    return _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
-  }
-
-  Color get _textColor {
-    return _isDarkMode ? Colors.white : const Color(0xFF2D261E);
-  }
-
-  Color get _subtitleColor {
-    return _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
-  }
-
-  Color get _primaryColor {
-    return _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFD97706);
-  }
-
-  Color get _inputColor {
-    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFDFBF7);
-  }
-
-  Color get _borderColor {
-    return _isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3);
-  }
-
-  Color get _buttonTextColor {
-    return _isDarkMode ? const Color(0xFF0F172A) : Colors.white;
-  }
-
-  void _showSnackBar(String message, {bool isError = false}) {
+  void _showSnackBar(
+    String message, {
+    bool isError = false,
+  }) {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context)
@@ -110,13 +143,17 @@ class _PresentationScreenState extends State<PresentationScreen> {
                 color: Colors.white,
               ),
               const SizedBox(width: 10),
-              Expanded(child: Text(message)),
+              Expanded(
+                child: Text(message),
+              ),
             ],
           ),
-          backgroundColor: isError ? Colors.redAccent : const Color(0xFF16A34A),
+          backgroundColor: isError
+              ? Colors.redAccent
+              : const Color(0xFF16A34A),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
       );
@@ -125,7 +162,8 @@ class _PresentationScreenState extends State<PresentationScreen> {
   Future<void> _handleSave() async {
     if (_isLoading) return;
 
-    final isValid = _formKey.currentState?.validate() ?? false;
+    final isValid =
+        _formKey.currentState?.validate() ?? false;
 
     if (!isValid) return;
 
@@ -137,11 +175,17 @@ class _PresentationScreenState extends State<PresentationScreen> {
 
     try {
       final title = _titleController.text.trim();
-      final description = _descriptionController.text.trim();
-      final timeInMinutes = int.parse(_timeController.text.trim());
-      final timeInSeconds = timeInMinutes * 60;
+      final description =
+          _descriptionController.text.trim();
 
-      final item = await ApiService.createPresentation(
+      final timeInMinutes =
+          int.parse(_timeController.text.trim());
+
+      final timeInSeconds =
+          timeInMinutes * 60;
+
+      final item =
+          await ApiService.createPresentation(
         title: title,
         description: description,
         totalTargetTime: timeInSeconds,
@@ -149,11 +193,15 @@ class _PresentationScreenState extends State<PresentationScreen> {
 
       if (!mounted) return;
 
-      final rawPresentationId = item['_id'] ?? item['presentation']?['_id'];
+      final rawPresentationId =
+          item['_id'] ??
+          item['presentation']?['_id'];
 
-      final presentationId = rawPresentationId?.toString();
+      final presentationId =
+          rawPresentationId?.toString();
 
-      if (presentationId == null || presentationId.isEmpty) {
+      if (presentationId == null ||
+          presentationId.isEmpty) {
         setState(() {
           _isLoading = false;
         });
@@ -162,6 +210,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
           'Presentation was created, but its ID was not found',
           isError: true,
         );
+
         return;
       }
 
@@ -169,14 +218,19 @@ class _PresentationScreenState extends State<PresentationScreen> {
         _isLoading = false;
       });
 
-      _showSnackBar('Presentation created successfully');
+      _showSnackBar(
+        'Presentation created successfully',
+      );
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => SlideManagementScreen(
-            presentationId: presentationId,
-            targetTime: _timeController.text.trim(),
+          builder: (_) =>
+              SlideManagementScreen(
+            presentationId:
+                presentationId,
+            targetTime:
+                _timeController.text.trim(),
           ),
         ),
       );
@@ -187,21 +241,29 @@ class _PresentationScreenState extends State<PresentationScreen> {
         _isLoading = false;
       });
 
-      _showSnackBar('Create failed: $e', isError: true);
+      _showSnackBar(
+        'Create failed: $e',
+        isError: true,
+      );
     }
   }
 
   Future<void> _handleUpdate() async {
     if (_isLoading) return;
 
-    final isValid = _formKey.currentState?.validate() ?? false;
+    final isValid =
+        _formKey.currentState?.validate() ?? false;
 
     if (!isValid) return;
 
     final presentationId = widget.id;
 
-    if (presentationId == null || presentationId.isEmpty) {
-      _showSnackBar('Presentation ID not found', isError: true);
+    if (presentationId == null ||
+        presentationId.isEmpty) {
+      _showSnackBar(
+        'Presentation ID not found',
+        isError: true,
+      );
       return;
     }
 
@@ -213,11 +275,18 @@ class _PresentationScreenState extends State<PresentationScreen> {
 
     try {
       final title = _titleController.text.trim();
-      final description = _descriptionController.text.trim();
-      final timeInMinutes = int.parse(_timeController.text.trim());
-      final timeInSeconds = timeInMinutes * 60;
 
-      final isSuccess = await ApiService.updatePresentation(
+      final description =
+          _descriptionController.text.trim();
+
+      final timeInMinutes =
+          int.parse(_timeController.text.trim());
+
+      final timeInSeconds =
+          timeInMinutes * 60;
+
+      final isSuccess =
+          await ApiService.updatePresentation(
         id: presentationId,
         title: title,
         description: description,
@@ -231,11 +300,16 @@ class _PresentationScreenState extends State<PresentationScreen> {
       });
 
       if (isSuccess) {
-        _showSnackBar('Presentation updated successfully');
+        _showSnackBar(
+          'Presentation updated successfully',
+        );
 
         Navigator.pop(context, true);
       } else {
-        _showSnackBar('Update failed', isError: true);
+        _showSnackBar(
+          'Update failed',
+          isError: true,
+        );
       }
     } catch (e) {
       if (!mounted) return;
@@ -244,7 +318,10 @@ class _PresentationScreenState extends State<PresentationScreen> {
         _isLoading = false;
       });
 
-      _showSnackBar('Update failed: $e', isError: true);
+      _showSnackBar(
+        'Update failed: $e',
+        isError: true,
+      );
     }
   }
 
@@ -258,88 +335,181 @@ class _PresentationScreenState extends State<PresentationScreen> {
       labelText: label,
       hintText: hint,
       suffixText: suffixText,
-      labelStyle: TextStyle(color: _subtitleColor),
+      labelStyle: TextStyle(
+        color: _subtitleColor,
+      ),
       hintStyle: TextStyle(
-        color: _isDarkMode ? Colors.white30 : const Color(0xFFAAA093),
+        color: _isDarkMode
+            ? Colors.white30
+            : const Color(0xFFAAA093),
       ),
       suffixStyle: TextStyle(
         color: _subtitleColor,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
       ),
-      prefixIcon: Icon(icon, color: _primaryColor),
+      prefixIcon: Container(
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: _primaryColor.withValues(
+            alpha: 0.10,
+          ),
+          borderRadius:
+              BorderRadius.circular(11),
+        ),
+        child: Icon(
+          icon,
+          size: 21,
+          color: _primaryColor,
+        ),
+      ),
       filled: true,
       fillColor: _inputColor,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      contentPadding:
+          const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 18,
+      ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: _borderColor),
+        borderRadius:
+            BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: _borderColor,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: _primaryColor, width: 2),
+        borderRadius:
+            BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: _primaryColor,
+          width: 2,
+        ),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.redAccent),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 2),
-      ),
-      errorStyle: const TextStyle(color: Colors.redAccent),
-    );
-  }
-
-  BoxDecoration _cardDecoration() {
-    return BoxDecoration(
-      color: _cardColor,
-      borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: _borderColor),
-      boxShadow: [
-        BoxShadow(
-          color: _isDarkMode
-              ? Colors.black.withValues(alpha: 0.20)
-              : const Color(0xFF7A7062).withValues(alpha: 0.08),
-          blurRadius: 24,
-          offset: const Offset(0, 10),
+        borderRadius:
+            BorderRadius.circular(16),
+        borderSide: const BorderSide(
+          color: Colors.redAccent,
         ),
-      ],
+      ),
+      focusedErrorBorder:
+          OutlineInputBorder(
+        borderRadius:
+            BorderRadius.circular(16),
+        borderSide: const BorderSide(
+          color: Colors.redAccent,
+          width: 2,
+        ),
+      ),
+      errorStyle: const TextStyle(
+        color: Colors.redAccent,
+      ),
     );
   }
 
   Widget _buildHeader() {
-    return Column(
+    return Stack(
       children: [
         Container(
-          width: 86,
-          height: 86,
+          width: double.infinity,
+          padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
-            color: _primaryColor.withValues(alpha: 0.12),
-            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: _isDarkMode
+                  ? [
+                      const Color(0xFF1A2D49),
+                      const Color(0xFF152238),
+                    ]
+                  : [
+                      const Color(0xFFFFF5E8),
+                      const Color(0xFFFFE8CD),
+                    ],
+            ),
+            borderRadius:
+                BorderRadius.circular(24),
+            border: Border.all(
+              color: _borderColor,
+            ),
           ),
-          child: Icon(
-            widget.isEdit ? Icons.edit_note_rounded : Icons.add_chart_rounded,
-            size: 44,
-            color: _primaryColor,
+          child: Row(
+            children: [
+              Container(
+                width: 68,
+                height: 68,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      _primaryColor,
+                      _secondaryColor,
+                    ],
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(21),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _primaryColor
+                          .withValues(alpha: 0.25),
+                      blurRadius: 22,
+                      offset:
+                          const Offset(0, 9),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  widget.isEdit
+                      ? Icons.edit_note_rounded
+                      : Icons.add_chart_rounded,
+                  size: 36,
+                  color: _buttonTextColor,
+                ),
+              ),
+              const SizedBox(width: 17),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.isEdit
+                          ? 'Edit Presentation'
+                          : 'Create Presentation',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight:
+                            FontWeight.w900,
+                        color: _textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      widget.isEdit
+                          ? 'Update the information and target duration.'
+                          : 'Add the details before uploading slides and scripts.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.45,
+                        color: _subtitleColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 18),
-        Text(
-          widget.isEdit ? 'Edit Presentation' : 'Create Presentation',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-            color: _textColor,
+        Positioned(
+          top: -26,
+          right: -22,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: _primaryColor
+                  .withValues(alpha: 0.07),
+              shape: BoxShape.circle,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          widget.isEdit
-              ? 'Update your presentation information and target duration.'
-              : 'Add the basic details before uploading slides and scripts.',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, height: 1.5, color: _subtitleColor),
         ),
       ],
     );
@@ -348,21 +518,48 @@ class _PresentationScreenState extends State<PresentationScreen> {
   Widget _buildInfoBanner() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: _primaryColor.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _primaryColor.withValues(alpha: 0.22)),
+        color: _primaryColor.withValues(
+          alpha: 0.09,
+        ),
+        borderRadius:
+            BorderRadius.circular(16),
+        border: Border.all(
+          color: _primaryColor.withValues(
+            alpha: 0.22,
+          ),
+        ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lightbulb_outline_rounded, size: 21, color: _primaryColor),
-          const SizedBox(width: 10),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: _primaryColor.withValues(
+                alpha: 0.12,
+              ),
+              borderRadius:
+                  BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.lightbulb_outline_rounded,
+              size: 21,
+              color: _primaryColor,
+            ),
+          ),
+          const SizedBox(width: 11),
           Expanded(
             child: Text(
-              'Set a realistic target time so the practice result can compare your actual presentation duration.',
-              style: TextStyle(fontSize: 13, height: 1.45, color: _textColor),
+              'Set a realistic target time so the app can compare your actual presentation duration.',
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.45,
+                color: _textColor,
+              ),
             ),
           ),
         ],
@@ -379,19 +576,27 @@ class _PresentationScreenState extends State<PresentationScreen> {
             controller: _titleController,
             focusNode: _titleFocusNode,
             enabled: !_isLoading,
-            textInputAction: TextInputAction.next,
+            textInputAction:
+                TextInputAction.next,
             maxLength: 100,
-            style: TextStyle(color: _textColor),
+            style: TextStyle(
+              color: _textColor,
+            ),
             onFieldSubmitted: (_) {
-              FocusScope.of(context).requestFocus(_descriptionFocusNode);
+              FocusScope.of(context)
+                  .requestFocus(
+                _descriptionFocusNode,
+              );
             },
             decoration: _inputDecoration(
               label: 'Presentation title',
-              hint: 'Example: Final Project Presentation',
+              hint:
+                  'Example: Final Project Presentation',
               icon: Icons.title_rounded,
             ),
             validator: (value) {
-              final title = value?.trim() ?? '';
+              final title =
+                  value?.trim() ?? '';
 
               if (title.isEmpty) {
                 return 'Please enter a title';
@@ -404,24 +609,34 @@ class _PresentationScreenState extends State<PresentationScreen> {
               return null;
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           TextFormField(
-            controller: _descriptionController,
-            focusNode: _descriptionFocusNode,
+            controller:
+                _descriptionController,
+            focusNode:
+                _descriptionFocusNode,
             enabled: !_isLoading,
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.newline,
+            keyboardType:
+                TextInputType.multiline,
+            textInputAction:
+                TextInputAction.newline,
             minLines: 4,
             maxLines: 6,
             maxLength: 500,
-            style: TextStyle(color: _textColor, height: 1.5),
+            style: TextStyle(
+              color: _textColor,
+              height: 1.5,
+            ),
             decoration: _inputDecoration(
               label: 'Description',
-              hint: 'Describe the topic and purpose of this presentation',
-              icon: Icons.description_outlined,
+              hint:
+                  'Describe the topic and purpose of this presentation',
+              icon:
+                  Icons.description_outlined,
             ),
             validator: (value) {
-              final description = value?.trim() ?? '';
+              final description =
+                  value?.trim() ?? '';
 
               if (description.isEmpty) {
                 return 'Please enter a description';
@@ -434,18 +649,25 @@ class _PresentationScreenState extends State<PresentationScreen> {
               return null;
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           TextFormField(
             controller: _timeController,
             focusNode: _timeFocusNode,
             enabled: !_isLoading,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.done,
+            keyboardType:
+                TextInputType.number,
+            textInputAction:
+                TextInputAction.done,
             inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(3),
+              FilteringTextInputFormatter
+                  .digitsOnly,
+              LengthLimitingTextInputFormatter(
+                3,
+              ),
             ],
-            style: TextStyle(color: _textColor),
+            style: TextStyle(
+              color: _textColor,
+            ),
             onFieldSubmitted: (_) {
               if (widget.isEdit) {
                 _handleUpdate();
@@ -460,13 +682,15 @@ class _PresentationScreenState extends State<PresentationScreen> {
               suffixText: 'minutes',
             ),
             validator: (value) {
-              final text = value?.trim() ?? '';
+              final text =
+                  value?.trim() ?? '';
 
               if (text.isEmpty) {
                 return 'Please enter a target duration';
               }
 
-              final minutes = int.tryParse(text);
+              final minutes =
+                  int.tryParse(text);
 
               if (minutes == null) {
                 return 'Please enter numbers only';
@@ -485,46 +709,64 @@ class _PresentationScreenState extends State<PresentationScreen> {
           ),
           const SizedBox(height: 20),
           _buildInfoBanner(),
-          const SizedBox(height: 26),
+          const SizedBox(height: 25),
           SizedBox(
             width: double.infinity,
-            height: 54,
+            height: 56,
             child: ElevatedButton.icon(
               onPressed: _isLoading
                   ? null
                   : widget.isEdit
-                  ? _handleUpdate
-                  : _handleSave,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _primaryColor,
-                disabledBackgroundColor: _primaryColor.withValues(alpha: 0.50),
-                foregroundColor: _buttonTextColor,
+                      ? _handleUpdate
+                      : _handleSave,
+              style:
+                  ElevatedButton.styleFrom(
+                backgroundColor:
+                    _primaryColor,
+                disabledBackgroundColor:
+                    _primaryColor.withValues(
+                  alpha: 0.50,
+                ),
+                foregroundColor:
+                    _buttonTextColor,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+                shape:
+                    RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                    16,
+                  ),
                 ),
               ),
               icon: _isLoading
                   ? const SizedBox.shrink()
                   : Icon(
                       widget.isEdit
-                          ? Icons.save_outlined
-                          : Icons.arrow_forward_rounded,
+                          ? Icons
+                              .save_outlined
+                          : Icons
+                              .arrow_forward_rounded,
                     ),
               label: _isLoading
                   ? SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(
+                      child:
+                          CircularProgressIndicator(
                         strokeWidth: 2.5,
-                        color: _buttonTextColor,
+                        color:
+                            _buttonTextColor,
                       ),
                     )
                   : Text(
-                      widget.isEdit ? 'Save Changes' : 'Continue to Slides',
-                      style: const TextStyle(
+                      widget.isEdit
+                          ? 'Save Changes'
+                          : 'Continue to Slides',
+                      style:
+                          const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w800,
+                        fontWeight:
+                            FontWeight.w800,
                       ),
                     ),
             ),
@@ -537,20 +779,51 @@ class _PresentationScreenState extends State<PresentationScreen> {
   Widget _buildContent() {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+        padding: const EdgeInsets.fromLTRB(
+          20,
+          18,
+          20,
+          34,
+        ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680),
-          child: Container(
-            padding: const EdgeInsets.all(28),
-            decoration: _cardDecoration(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 30),
-                _buildForm(),
-              ],
-            ),
+          constraints:
+              const BoxConstraints(
+            maxWidth: 680,
+          ),
+          child: Column(
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.all(26),
+                decoration: BoxDecoration(
+                  color: _cardColor,
+                  borderRadius:
+                      BorderRadius.circular(26),
+                  border: Border.all(
+                    color: _borderColor,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _isDarkMode
+                          ? Colors.black
+                              .withValues(
+                              alpha: 0.20,
+                            )
+                          : const Color(
+                              0xFFB7773D,
+                            ).withValues(
+                              alpha: 0.08,
+                            ),
+                      blurRadius: 24,
+                      offset:
+                          const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: _buildForm(),
+              ),
+            ],
           ),
         ),
       ),
@@ -560,44 +833,99 @@ class _PresentationScreenState extends State<PresentationScreen> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
-      valueListenable: ThemeController.isDarkMode,
-      builder: (context, isDarkMode, _) {
+      valueListenable:
+          ThemeController.isDarkMode,
+      builder: (
+        context,
+        isDarkMode,
+        _,
+      ) {
         return Scaffold(
-          backgroundColor: _backgroundColor,
+          backgroundColor:
+              _backgroundColor,
           appBar: AppBar(
-            backgroundColor: _backgroundColor,
+            backgroundColor:
+                _backgroundColor,
             foregroundColor: _textColor,
             elevation: 0,
             titleSpacing: 8,
             title: Row(
               children: [
-                Icon(Icons.mic_none_rounded, color: _primaryColor),
-                const SizedBox(width: 9),
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: _primaryColor
+                        .withValues(
+                      alpha: 0.11,
+                    ),
+                    borderRadius:
+                        BorderRadius.circular(
+                      12,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.co_present_rounded,
+                    color: _primaryColor,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 10),
                 Text(
-                  widget.isEdit ? 'Edit Presentation' : 'New Presentation',
+                  widget.isEdit
+                      ? 'Edit Presentation'
+                      : 'New Presentation',
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 19,
+                    fontWeight:
+                        FontWeight.w800,
                   ),
                 ),
               ],
             ),
             actions: [
-              IconButton(
-                onPressed: _isLoading ? null : ThemeController.toggleTheme,
-                icon: Icon(
-                  isDarkMode
-                      ? Icons.wb_sunny_outlined
-                      : Icons.dark_mode_outlined,
+              Container(
+                margin:
+                    const EdgeInsets.symmetric(
+                  vertical: 7,
                 ),
-                tooltip: isDarkMode
-                    ? 'Switch to Warm Mode'
-                    : 'Switch to Dark Mode',
+                decoration: BoxDecoration(
+                  color: _cardColor,
+                  borderRadius:
+                      BorderRadius.circular(
+                    13,
+                  ),
+                  border: Border.all(
+                    color: _borderColor,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: _isLoading
+                      ? null
+                      : ThemeController
+                          .toggleTheme,
+                  icon: Icon(
+                    isDarkMode
+                        ? Icons
+                            .wb_sunny_outlined
+                        : Icons
+                            .dark_mode_outlined,
+                    color: _primaryColor,
+                  ),
+                  tooltip: isDarkMode
+                      ? 'Switch to Warm Mode'
+                      : 'Switch to Dark Mode',
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
             ],
           ),
-          body: SafeArea(child: _buildContent()),
+          body: DecorativeBackground(
+            isDarkMode: isDarkMode,
+            child: SafeArea(
+              child: _buildContent(),
+            ),
+          ),
         );
       },
     );

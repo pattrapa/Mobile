@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_project/decorative_background.dart';
 import 'package:flutter_project/api_service.dart';
 import 'package:flutter_project/result_summary.dart';
 import 'package:flutter_project/theme_controller.dart';
@@ -305,31 +306,31 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
   }
 
   Color get _backgroundColor {
-    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFAF6EE);
+    return _isDarkMode ? const Color(0xFF0B1220) : const Color(0xFFFFF9F1);
   }
 
   Color get _cardColor {
-    return _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
+    return _isDarkMode ? const Color(0xFF152238) : Colors.white;
   }
 
   Color get _textColor {
-    return _isDarkMode ? Colors.white : const Color(0xFF2D261E);
+    return _isDarkMode ? Colors.white : const Color(0xFF29231D);
   }
 
   Color get _subtitleColor {
-    return _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
+    return _isDarkMode ? Colors.white60 : const Color(0xFF74685A);
   }
 
   Color get _primaryColor {
-    return _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFD97706);
+    return _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFF97316);
   }
 
   Color get _borderColor {
-    return _isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3);
+    return _isDarkMode ? const Color(0xFF2C405D) : const Color(0xFFF1E5D6);
   }
 
   Color get _buttonTextColor {
-    return _isDarkMode ? const Color(0xFF0F172A) : Colors.white;
+    return _isDarkMode ? const Color(0xFF07111F) : Colors.white;
   }
 
   BoxDecoration _cardDecoration({double radius = 22}) {
@@ -397,123 +398,131 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
     );
   }
 
-  Widget _buildCompactLayout() {
-    return Column(
+ Widget _buildCompactLayout() {
+  return Column(
+    children: [
+      _buildPracticeHeader(),
+      const SizedBox(height: 10),
+      Expanded(
+        child: ListView(
+          padding: const EdgeInsets.only(
+            bottom: 10,
+          ),
+          children: [
+            SizedBox(
+              height: 265,
+              child: _buildSlideViewer(),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 190,
+              child: _buildScriptBox(),
+            ),
+            const SizedBox(height: 10),
+            _buildTimerBox(),
+            const SizedBox(height: 10),
+            _buildFinishButton(),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+  Widget _buildPracticeHeader() {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(
+      horizontal: 15,
+      vertical: 12,
+    ),
+    decoration: _cardDecoration(
+      radius: 18,
+    ),
+    child: Row(
       children: [
-        _buildPracticeHeader(),
-        const SizedBox(height: 16),
+        Container(
+          width: 45,
+          height: 45,
+          decoration: BoxDecoration(
+            color: _primaryColor.withValues(
+              alpha: 0.12,
+            ),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Icon(
+            Icons.record_voice_over_rounded,
+            color: _primaryColor,
+            size: 24,
+          ),
+        ),
+        const SizedBox(width: 12),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: 8),
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 300, child: _buildSlideViewer()),
-              const SizedBox(height: 16),
-              SizedBox(height: 260, child: _buildScriptBox()),
-              const SizedBox(height: 16),
-              _buildTimerBox(),
-              const SizedBox(height: 16),
-              _buildFinishButton(),
+              Text(
+                'Practice Session',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: _textColor,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Follow the slides and maintain your pacing.',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: _subtitleColor,
+                ),
+              ),
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildPracticeHeader() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: _cardDecoration(),
-      child: Row(
-        children: [
-          Container(
-            width: 54,
-            height: 54,
-            decoration: BoxDecoration(
-              color: _primaryColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(
-              Icons.record_voice_over_rounded,
-              color: _primaryColor,
-              size: 29,
-            ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 8,
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Practice Session',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: _textColor,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Follow your slides, read the script, and maintain your pacing.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
-                    color: _subtitleColor,
-                  ),
-                ),
-              ],
+          decoration: BoxDecoration(
+            color: _primaryColor.withValues(
+              alpha: 0.09,
             ),
-          ),
-          const SizedBox(width: 10),
-          _buildHeaderInfo(
-            icon: Icons.schedule_rounded,
-            label: 'Target',
-            value: _formatTargetTime(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeaderInfo({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFDFBF7),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _borderColor),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 19, color: _primaryColor),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(fontSize: 11, color: _subtitleColor),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _primaryColor.withValues(
+                alpha: 0.20,
               ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.schedule_rounded,
+                size: 17,
+                color: _primaryColor,
+              ),
+              const SizedBox(width: 5),
               Text(
-                value,
+                _formatTargetTime(),
                 style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
                   color: _textColor,
                 ),
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildSlideViewer() {
     return Container(
@@ -697,7 +706,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
           Divider(height: 1, color: _borderColor),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.all(14),
               child: SelectableText(
                 _currentScript(),
                 style: TextStyle(fontSize: 16, height: 1.7, color: _textColor),
@@ -756,7 +765,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
           Text(
             _formatTime(_seconds),
             style: TextStyle(
-              fontSize: 42,
+              fontSize: 34,
               fontWeight: FontWeight.w800,
               letterSpacing: 2,
               color: _primaryColor,
@@ -767,7 +776,7 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
             'Target ${_formatTargetTime()}',
             style: TextStyle(fontSize: 13, color: _subtitleColor),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -998,7 +1007,10 @@ class _PracticeModeScreenState extends State<PracticeModeScreen> {
                   return _buildEmptyOrError(hasError: false);
                 }
 
-                return _buildMainContent();
+                return DecorativeBackground(
+                  isDarkMode: isDarkMode,
+                  child: _buildMainContent(),
+                );
               },
             ),
           ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/decorative_background.dart';
 import 'package:flutter_project/home.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_project/theme_controller.dart';
+import 'package:intl/intl.dart';
 
 class ResultSummaryScreen extends StatefulWidget {
   final int actualTimeInSeconds;
@@ -18,7 +19,7 @@ class ResultSummaryScreen extends StatefulWidget {
 }
 
 class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
-  bool _isDarkMode = false;
+  bool get _isDarkMode => ThemeController.isDarkMode.value;
 
   int get _targetTimeInSeconds {
     final minutes = int.tryParse(widget.targetTime) ?? 0;
@@ -33,7 +34,6 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
     if (_targetTimeInSeconds <= 0) return 0;
 
     final progress = widget.actualTimeInSeconds / _targetTimeInSeconds;
-
     return progress.clamp(0.0, 1.0);
   }
 
@@ -103,35 +103,61 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   }
 
   Color get _backgroundColor {
-    return _isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFAF6EE);
+    return _isDarkMode
+        ? const Color(0xFF0B1220)
+        : const Color(0xFFFFF9F1);
   }
 
   Color get _cardColor {
-    return _isDarkMode ? const Color(0xFF1E293B) : Colors.white;
+    return _isDarkMode
+        ? const Color(0xFF152238)
+        : Colors.white;
   }
 
   Color get _textColor {
-    return _isDarkMode ? Colors.white : const Color(0xFF2D261E);
+    return _isDarkMode
+        ? Colors.white
+        : const Color(0xFF29231D);
   }
 
   Color get _subtitleColor {
-    return _isDarkMode ? Colors.white60 : const Color(0xFF6B5E4E);
+    return _isDarkMode
+        ? Colors.white60
+        : const Color(0xFF74685A);
   }
 
   Color get _primaryColor {
-    return _isDarkMode ? const Color(0xFF38BDF8) : const Color(0xFFD97706);
+    return _isDarkMode
+        ? const Color(0xFF38BDF8)
+        : const Color(0xFFF97316);
+  }
+
+  Color get _secondaryColor {
+    return _isDarkMode
+        ? const Color(0xFF6366F1)
+        : const Color(0xFFF59E0B);
   }
 
   Color get _borderColor {
-    return _isDarkMode ? const Color(0xFF334155) : const Color(0xFFEFEBE3);
+    return _isDarkMode
+        ? const Color(0xFF2C405D)
+        : const Color(0xFFF1E5D6);
   }
 
   Color get _buttonTextColor {
-    return _isDarkMode ? const Color(0xFF0F172A) : Colors.white;
+    return _isDarkMode
+        ? const Color(0xFF07111F)
+        : Colors.white;
+  }
+
+  Color get _surfaceColor {
+    return _isDarkMode
+        ? const Color(0xFF0F1A2C)
+        : const Color(0xFFFFFCF8);
   }
 
   String _formatDuration(int totalSeconds) {
-    final safeSeconds = totalSeconds < 0 ? totalSeconds.abs() : totalSeconds;
+    final safeSeconds = totalSeconds.abs();
 
     final hours = safeSeconds ~/ 3600;
     final minutes = (safeSeconds % 3600) ~/ 60;
@@ -147,7 +173,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
         '${seconds.toString().padLeft(2, '0')}';
   }
 
-  BoxDecoration _cardDecoration({double radius = 22}) {
+  BoxDecoration _cardDecoration({double radius = 20}) {
     return BoxDecoration(
       color: _cardColor,
       borderRadius: BorderRadius.circular(radius),
@@ -155,10 +181,10 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
       boxShadow: [
         BoxShadow(
           color: _isDarkMode
-              ? Colors.black.withValues(alpha: 0.18)
-              : const Color(0xFF7A7062).withValues(alpha: 0.07),
-          blurRadius: 18,
-          offset: const Offset(0, 7),
+              ? Colors.black.withValues(alpha: 0.16)
+              : const Color(0xFFB7773D).withValues(alpha: 0.06),
+          blurRadius: 16,
+          offset: const Offset(0, 6),
         ),
       ],
     );
@@ -167,7 +193,9 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   void _goBackHome() {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      MaterialPageRoute(
+        builder: (_) => const HomeScreen(),
+      ),
       (_) => false,
     );
   }
@@ -175,44 +203,88 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   Widget _buildHeaderCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(26),
-      decoration: _cardDecoration(),
-      child: Column(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: _isDarkMode
+              ? [
+                  const Color(0xFF1A2D49),
+                  const Color(0xFF152238),
+                ]
+              : [
+                  const Color(0xFFFFF5E8),
+                  const Color(0xFFFFE8CD),
+                ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: _isDarkMode
+                ? Colors.black.withValues(alpha: 0.16)
+                : const Color(0xFFB7773D).withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
         children: [
           Container(
-            width: 92,
-            height: 92,
+            width: 58,
+            height: 58,
             decoration: BoxDecoration(
-              color: _primaryColor.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  _primaryColor,
+                  _secondaryColor,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(18),
             ),
-            child: Icon(_resultIcon, size: 48, color: _primaryColor),
-          ),
-          const SizedBox(height: 18),
-          Text(
-            'Practice Summary',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 27,
-              fontWeight: FontWeight.w800,
-              color: _textColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _resultTitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: _primaryColor,
+            child: Icon(
+              _resultIcon,
+              size: 30,
+              color: _buttonTextColor,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            _resultMessage,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, height: 1.5, color: _subtitleColor),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Practice Summary',
+                  style: TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w900,
+                    color: _textColor,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  _resultTitle,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: _primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _resultMessage,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.4,
+                    color: _subtitleColor,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -222,26 +294,38 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   Widget _buildTimeComparisonCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
       decoration: _cardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.compare_arrows_rounded, color: _primaryColor),
-              const SizedBox(width: 9),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: _primaryColor.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(
+                  Icons.compare_arrows_rounded,
+                  color: _primaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
               Text(
                 'Time Comparison',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
                   color: _textColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 15),
           Row(
             children: [
               Expanded(
@@ -253,48 +337,46 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                   textColor: _textColor,
                   subtitleColor: _subtitleColor,
                   borderColor: _borderColor,
-                  isDarkMode: _isDarkMode,
+                  surfaceColor: _surfaceColor,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: _TimeValue(
                   label: 'Target time',
                   value: _formattedTargetTime,
                   icon: Icons.flag_outlined,
-                  primaryColor: _primaryColor,
+                  primaryColor: _secondaryColor,
                   textColor: _textColor,
                   subtitleColor: _subtitleColor,
                   borderColor: _borderColor,
-                  isDarkMode: _isDarkMode,
+                  surfaceColor: _surfaceColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: LinearProgressIndicator(
-                    minHeight: 12,
+                    minHeight: 10,
                     value: _progressValue,
-                    backgroundColor: _isDarkMode
-                        ? const Color(0xFF0F172A)
-                        : const Color(0xFFF3EFE6),
+                    backgroundColor: _surfaceColor,
                     color: _primaryColor,
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Text(
                 _targetTimeInSeconds <= 0
                     ? 'No target'
-                    : '${((_progressValue) * 100).round()}%',
+                    : '${(_progressValue * 100).round()}%',
                 style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
                   color: _subtitleColor,
                 ),
               ),
@@ -308,7 +390,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   Widget _buildDetailsCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(17),
       decoration: _cardDecoration(),
       child: Column(
         children: [
@@ -320,7 +402,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
             textColor: _textColor,
             subtitleColor: _subtitleColor,
           ),
-          Divider(height: 28, color: _borderColor),
+          Divider(height: 22, color: _borderColor),
           _SummaryRow(
             title: 'Target presentation time',
             value: _formattedTargetTime,
@@ -329,16 +411,18 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
             textColor: _textColor,
             subtitleColor: _subtitleColor,
           ),
-          Divider(height: 28, color: _borderColor),
+          Divider(height: 22, color: _borderColor),
           _SummaryRow(
             title: 'Time difference',
-            value: _targetTimeInSeconds <= 0 ? '-' : _formattedDifference,
+            value: _targetTimeInSeconds <= 0
+                ? '-'
+                : _formattedDifference,
             icon: Icons.difference_rounded,
             primaryColor: _primaryColor,
             textColor: _textColor,
             subtitleColor: _subtitleColor,
           ),
-          Divider(height: 28, color: _borderColor),
+          Divider(height: 22, color: _borderColor),
           _SummaryRow(
             title: 'Last practiced',
             value: _lastPracticedTime,
@@ -371,21 +455,39 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: _primaryColor.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _primaryColor.withValues(alpha: 0.22)),
+        color: _primaryColor.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: _primaryColor.withValues(alpha: 0.22),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lightbulb_outline_rounded, color: _primaryColor),
-          const SizedBox(width: 12),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: _primaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Icon(
+              Icons.lightbulb_outline_rounded,
+              color: _primaryColor,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 11),
           Expanded(
             child: Text(
               tip,
-              style: TextStyle(fontSize: 14, height: 1.5, color: _textColor),
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.45,
+                color: _textColor,
+              ),
             ),
           ),
         ],
@@ -396,7 +498,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   Widget _buildBackButton() {
     return SizedBox(
       width: double.infinity,
-      height: 54,
+      height: 52,
       child: ElevatedButton.icon(
         onPressed: _goBackHome,
         style: ElevatedButton.styleFrom(
@@ -404,13 +506,16 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
           foregroundColor: _buttonTextColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
         icon: const Icon(Icons.home_outlined),
         label: const Text(
           'Back to Home',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+          ),
         ),
       ),
     );
@@ -419,19 +524,19 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   Widget _buildContent() {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 30),
+        padding: const EdgeInsets.fromLTRB(18, 12, 18, 24),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 760),
+          constraints: const BoxConstraints(maxWidth: 720),
           child: Column(
             children: [
               _buildHeaderCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               _buildTimeComparisonCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               _buildDetailsCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               _buildTipCard(),
-              const SizedBox(height: 22),
+              const SizedBox(height: 16),
               _buildBackButton(),
             ],
           ),
@@ -454,33 +559,62 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
               backgroundColor: _backgroundColor,
               foregroundColor: _textColor,
               elevation: 0,
-              titleSpacing: 20,
+              titleSpacing: 18,
               title: Row(
                 children: [
-                  Icon(Icons.mic_none_rounded, color: _primaryColor),
-                  const SizedBox(width: 9),
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: _primaryColor.withValues(alpha: 0.11),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.assessment_outlined,
+                      color: _primaryColor,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
                   const Text(
                     'Result Summary',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ],
               ),
               actions: [
-                IconButton(
-                  onPressed: ThemeController.toggleTheme,
-                  icon: Icon(
-                    isDarkMode
-                        ? Icons.wb_sunny_outlined
-                        : Icons.dark_mode_outlined,
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 7),
+                  decoration: BoxDecoration(
+                    color: _cardColor,
+                    borderRadius: BorderRadius.circular(13),
+                    border: Border.all(color: _borderColor),
                   ),
-                  tooltip: isDarkMode
-                      ? 'Switch to Warm Mode'
-                      : 'Switch to Dark Mode',
+                  child: IconButton(
+                    onPressed: ThemeController.toggleTheme,
+                    icon: Icon(
+                      isDarkMode
+                          ? Icons.wb_sunny_outlined
+                          : Icons.dark_mode_outlined,
+                      color: _primaryColor,
+                    ),
+                    tooltip: isDarkMode
+                        ? 'Switch to Warm Mode'
+                        : 'Switch to Dark Mode',
+                  ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
               ],
             ),
-            body: SafeArea(child: _buildContent()),
+            body: DecorativeBackground(
+              isDarkMode: isDarkMode,
+              child: SafeArea(
+                child: _buildContent(),
+              ),
+            ),
           ),
         );
       },
@@ -492,12 +626,11 @@ class _TimeValue extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
-
   final Color primaryColor;
   final Color textColor;
   final Color subtitleColor;
   final Color borderColor;
-  final bool isDarkMode;
+  final Color surfaceColor;
 
   const _TimeValue({
     required this.label,
@@ -507,36 +640,46 @@ class _TimeValue extends StatelessWidget {
     required this.textColor,
     required this.subtitleColor,
     required this.borderColor,
-    required this.isDarkMode,
+    required this.surfaceColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFFDFBF7),
-        borderRadius: BorderRadius.circular(16),
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(15),
         border: Border.all(color: borderColor),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 25, color: primaryColor),
-          const SizedBox(height: 10),
+          Icon(
+            icon,
+            size: 22,
+            color: primaryColor,
+          ),
+          const SizedBox(height: 7),
           Text(
             value,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
+              fontSize: 21,
+              fontWeight: FontWeight.w900,
               color: textColor,
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 3),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: subtitleColor),
+            style: TextStyle(
+              fontSize: 11,
+              color: subtitleColor,
+            ),
           ),
         ],
       ),
@@ -548,7 +691,6 @@ class _SummaryRow extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
-
   final Color primaryColor;
   final Color textColor;
   final Color subtitleColor;
@@ -567,26 +709,36 @@ class _SummaryRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 44,
-          height: 44,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: primaryColor.withValues(alpha: 0.11),
-            borderRadius: BorderRadius.circular(13),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, size: 22, color: primaryColor),
+          child: Icon(
+            icon,
+            size: 20,
+            color: primaryColor,
+          ),
         ),
-        const SizedBox(width: 13),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 13, color: subtitleColor)),
-              const SizedBox(height: 3),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: subtitleColor,
+                ),
+              ),
+              const SizedBox(height: 2),
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
                   color: textColor,
                 ),
               ),
